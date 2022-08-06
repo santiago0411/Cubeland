@@ -1,4 +1,4 @@
-project "OpenGLApp"
+project "Cubeland"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++20"

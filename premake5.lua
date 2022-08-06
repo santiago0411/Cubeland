@@ -1,4 +1,4 @@
-workspace "OpenGLApp"
+workspace "Cubeland"
 	architecture "x64"
 	startproject "OpenGLApp"
 
@@ -22,4 +22,4 @@ group "Dependencies"
 	include "vendor/ImGui"
 group ""
 
-include "OpenGLApp"
+include "Cubeland"
