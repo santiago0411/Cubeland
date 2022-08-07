@@ -5,6 +5,9 @@ project "Cubeland"
 	targetdir "bin/%{cfg.buildcfg}"
 	staticruntime "off"
 
+	pchheader "pch.h"
+	pchsource "src/pch.cpp"
+
 	files 
 	{ 
 		"src/**.h",
@@ -13,13 +16,12 @@ project "Cubeland"
 
 	includedirs
 	{
+		"src",
 		"%{wks.location}/vendor/GLFW/include",
 		"%{wks.location}/vendor/Glad/include",
 		"%{wks.location}/vendor/ImGui",
 		"%{wks.location}/vendor/glm",
-
-		"src/**.h",
-		"src/**.cpp"
+		"%{wks.location}/vendor/spdlog/include",
 	}
 
 	defines
@@ -43,7 +45,7 @@ project "Cubeland"
 		defines { "APP_PLATFORM_WINDOWS" }
 
 	filter "configurations:Debug"
-		defines { "APP_DEBUG" }
+		defines { "APP_DEBUG", "CL_ENABLE_ASSERTS" }
 		runtime "Debug"
 		symbols "On"
 

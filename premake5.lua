@@ -1,6 +1,6 @@
 workspace "Cubeland"
 	architecture "x64"
-	startproject "OpenGLApp"
+	startproject "Cubeland"
 
 	configurations 
 	{ 

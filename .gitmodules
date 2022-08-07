@@ -7,3 +7,6 @@
 [submodule "OpenGLApp/vendor/ImGui"]
 	path = vendor/ImGui
 	url = https://github.com/TheCherno/imgui
+[submodule "vendor/spdlog"]
+	path = vendor/spdlog
+	url = https://github.com/gabime/spdlog
