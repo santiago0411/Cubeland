@@ -2,6 +2,7 @@
 #include "Application.h"
 
 #include "Core/Base.h"
+#include "Debug/DebugLayer.h"
 
 #include "Rendering/OpenGLContext.h"
 
@@ -19,6 +20,8 @@ namespace Cubeland
 
 		m_Window = Window::Create(1920, 1080);
 		m_Window->SetEventCallback(CL_BIND_EVENT_FN(Application::OnEvent));
+
+		m_LayerStack.PushLayer(new DebugLayer());
 	}
 
 	void Application::Run()
@@ -45,11 +48,11 @@ namespace Cubeland
 		dispatcher.Dispatch<WindowClosedEvent>(CL_BIND_EVENT_FN(Application::OnWindowClosed));
 		dispatcher.Dispatch<WindowResizedEvent>(CL_BIND_EVENT_FN(Application::OnWindowResized));
 
-		for (const auto& it : std::ranges::reverse_view(m_LayerStack))
+		for (const auto& layer : std::ranges::reverse_view(m_LayerStack))
 		{
 			if (e.Handled)
 				break;
-			it->OnEvent(e);
+			layer->OnEvent(e);
 		}
 	}
 

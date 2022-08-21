@@ -7,7 +7,7 @@ namespace Cubeland
 	class Layer
 	{
 	public:
-		Layer();
+		Layer() = default;
 		virtual ~Layer() = default;
 
 		virtual void OnAttach() {}
