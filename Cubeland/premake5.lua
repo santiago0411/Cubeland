@@ -11,17 +11,21 @@ project "Cubeland"
 	files 
 	{ 
 		"src/**.h",
-		"src/**.cpp"
+		"src/**.cpp",
+		"vendor/stb_image/**.h",
+		"vendor/stb_image/**.cpp"
 	}
 
 	includedirs
 	{
 		"src",
-		"%{wks.location}/vendor/GLFW/include",
-		"%{wks.location}/vendor/Glad/include",
-		"%{wks.location}/vendor/ImGui",
-		"%{wks.location}/vendor/glm",
-		"%{wks.location}/vendor/spdlog/include",
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.VulkanSDK}",
 	}
 
 	defines
@@ -49,11 +53,25 @@ project "Cubeland"
 		runtime "Debug"
 		symbols "On"
 
+		links
+		{
+			"%{Library.ShaderC_Debug}",
+			"%{Library.SPIRV_Cross_Debug}",
+			"%{Library.SPIRV_Cross_GLSL_Debug}"
+		}
+
 	filter "configurations:Release"
    		defines { "APP_RELEASE" }
 		runtime "Release"
 		optimize "On"
 		symbols "On"
+
+		links
+		{
+			"%{Library.ShaderC_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}"
+		}
 
 	filter "configurations:Dist"
 		kind "WindowedApp"
@@ -61,3 +79,10 @@ project "Cubeland"
 		runtime "Release"
 		optimize "On"
 		symbols "Off"
+
+		links
+		{
+			"%{Library.ShaderC_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}"
+		}

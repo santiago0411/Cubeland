@@ -9,3 +9,10 @@ bin-int/
 **.vcxproj.filters
 **.vcxproj.user
 **.DotSettings.user
+
+# Misc
+*.log
+
+# Directories
+Cubeland/assets/cache
+Cubeland/imgui.ini

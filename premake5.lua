@@ -1,3 +1,5 @@
+include "Dependencies.lua"
+
 workspace "Cubeland"
 	architecture "x64"
 	startproject "Cubeland"
