@@ -25,15 +25,29 @@ namespace Cubeland
 		m_Camera = Camera(45.0f, 0.1f, 100.0f);
 
 		static float vertices[] = {
-			-1.0f,  1.0f,  0.0f,
-			 1.0f,  1.0f,  0.0f,
-			-1.0f, -1.0f,  0.0f,
-			 1.0f, -1.0f,  0.0f,
+			-1.0f,  1.0f,   1.0f,
+			 1.0f,  1.0f,   1.0f,
+			-1.0f, -1.0f,   1.0f,
+			 1.0f, -1.0f,   1.0f,
+			-1.0f,  1.0f,  -1.0f,
+			 1.0f,  1.0f,  -1.0f,
+			-1.0f, -1.0f,  -1.0f,
+			 1.0f, -1.0f,  -1.0f,
 		};
 
 		static uint32_t indices[] = {
 			0, 1, 2,
 			1, 2, 3,
+			4, 5, 6,
+			5, 6, 7,
+			0, 4, 5,
+			0, 1, 5,
+			2, 6, 7,
+			2, 3, 7,
+			0, 4, 6,
+			0, 2, 6,
+			1, 3, 7,
+			1, 5, 7
 		};
 
 		const auto vertexBuffer = CreateRef<VertexBuffer>(vertices, std::size(vertices));
