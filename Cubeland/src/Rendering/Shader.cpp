@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "Shader.h"
-#include "Shader.h"
 
 #include "Utils/Filesystem.h"
 #include "Utils/Timer.h"
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_cross.hpp>
@@ -115,7 +115,9 @@ namespace Cubeland
 		CL_LOG_TRACE("    {0} uniform buffers", resources.uniform_buffers.size());
 		CL_LOG_TRACE("    {0} resources", resources.sampled_images.size());
 
-		CL_LOG_TRACE("Uniform buffers:");
+		if (!resources.uniform_buffers.empty())
+			CL_LOG_TRACE("Uniform buffers:");
+
 		for (const auto& [id, typeId, baseTypeId, name] : resources.uniform_buffers)
 		{
 			const auto& bufferType = compiler.get_type(baseTypeId);
@@ -130,8 +132,8 @@ namespace Cubeland
 		}
 	}
 
-	Shader::Shader(std::string&& name, std::unordered_map<ShaderType, Filepath>&& shaderSources)
-		: m_Name(name)
+	Shader::Shader(std::string name, const std::unordered_map<ShaderType, Filepath>& shaderSources)
+		: m_Name(std::move(name))
 	{
 		Timer timer;
 
@@ -169,6 +171,12 @@ namespace Cubeland
 	void Shader::Bind() const
 	{
 		glUseProgram(m_RendererId);
+	}
+
+	void Shader::UploadMat4(const std::string& uniformName, const glm::mat4& mat4) const
+	{
+		const auto location = glGetUniformLocation(m_RendererId, uniformName.c_str());
+		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat4));
 	}
 
 	void Shader::CompileOpenGLBinaries(const ShaderSourceInfo& shaderSourceInfo)

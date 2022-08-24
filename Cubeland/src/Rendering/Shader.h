@@ -2,6 +2,8 @@
 
 #include "Utils/Filesystem.h"
 
+#include <glm/glm.hpp>
+
 namespace Cubeland
 {
 	enum class ShaderType
@@ -16,10 +18,12 @@ namespace Cubeland
 	class Shader
 	{
 	public:
-		Shader(std::string&& name, std::unordered_map<ShaderType, Utils::Filepath>&& shaderSources);
+		Shader(std::string name, const std::unordered_map<ShaderType, Utils::Filepath>& shaderSources);
 		~Shader();
 
 		void Bind() const;
+
+		void UploadMat4(const std::string& uniformName, const glm::mat4& mat4) const;
 
 	private:
 		struct ShaderSourceInfo

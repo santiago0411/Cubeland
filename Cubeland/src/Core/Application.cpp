@@ -4,6 +4,8 @@
 #include "Core/Base.h"
 #include "Debug/DebugLayer.h"
 
+#include "Game/GameLayer.h"
+
 #include "Rendering/OpenGLContext.h"
 
 #include <GLFW/glfw3.h>
@@ -21,6 +23,7 @@ namespace Cubeland
 		m_Window = Window::Create(1920, 1080);
 		m_Window->SetEventCallback(CL_BIND_EVENT_FN(Application::OnEvent));
 
+		// m_LayerStack.PushLayer(new GameLayer());
 		m_LayerStack.PushLayer(new DebugLayer());
 	}
 

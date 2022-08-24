@@ -154,4 +154,21 @@ namespace Cubeland
 		indexBuffer->Bind();
 		m_IndexBuffer = indexBuffer;
 	}
+
+	UniformBuffer::UniformBuffer(uint32_t size, uint32_t binding)
+	{
+		glCreateBuffers(1, &m_RendererId);
+		glNamedBufferData(m_RendererId, size, nullptr, GL_DYNAMIC_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, binding, m_RendererId);
+	}
+
+	UniformBuffer::~UniformBuffer()
+	{
+		glDeleteBuffers(1, &m_RendererId);
+	}
+
+	void UniformBuffer::SetData(const void* data, uint32_t size, uint32_t offset) const
+	{
+		glNamedBufferSubData(m_RendererId, offset, size, data);
+	}
 }

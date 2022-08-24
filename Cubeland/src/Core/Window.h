@@ -3,6 +3,8 @@
 #include "Core/Base.h"
 #include "Events/Event.h"
 
+#include <glm/vec2.hpp>
+
 struct GLFWwindow;
 
 namespace Cubeland
@@ -22,6 +24,8 @@ namespace Cubeland
 		void SetEventCallback(const EventCallbackFn& callback);
 		void SetVSync(bool enabled);
 		bool IsVSync() const;
+
+		glm::vec2 GetWidthAndHeight() const { return { m_Data.Width, m_Data.Height }; }
 
 		void* GetNativeWindow() const { return m_Window; }
 

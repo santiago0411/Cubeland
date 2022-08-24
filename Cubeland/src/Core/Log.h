@@ -2,8 +2,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include "Core/Base.h"
-
 namespace Cubeland
 {
 	class Log
