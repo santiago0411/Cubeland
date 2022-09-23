@@ -193,6 +193,7 @@ namespace Cubeland
 		{
 			CL_LOG_ERROR(result.GetErrorMessage());
 			CL_ASSERT(false);
+			return;
 		}
 
 		const auto data = std::vector(result.cbegin(), result.cend());

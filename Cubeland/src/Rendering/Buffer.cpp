@@ -31,6 +31,11 @@ namespace Cubeland
 		return 0;
 	}
 
+	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t count)
+	{
+		return CreateRef<VertexBuffer>(vertices, count);
+	}
+
 	VertexBuffer::VertexBuffer(float* vertices, uint32_t count)
 	{
 		glCreateBuffers(1, &m_RendererId);
@@ -46,6 +51,11 @@ namespace Cubeland
 	void VertexBuffer::Bind() const
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+	}
+
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
+	{
+		return CreateRef<IndexBuffer>(indices, count);
 	}
 
 	IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t count)
@@ -66,6 +76,11 @@ namespace Cubeland
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererId);
 	}
 
+	Ref<VertexArray> VertexArray::Create()
+	{
+		return CreateRef<VertexArray>();
+	}
+
 	VertexArray::VertexArray()
 	{
 		glCreateVertexArrays(1, &m_RendererId);
@@ -81,7 +96,7 @@ namespace Cubeland
 		glBindVertexArray(m_RendererId);
 	}
 
-	void VertexArray::SetVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
+	void VertexArray::SetVertexBuffer(Ref<VertexBuffer> vertexBuffer)
 	{
 		CL_ASSERT(!m_VertexBuffer);
 
@@ -149,22 +164,33 @@ namespace Cubeland
 		m_VertexBuffer = vertexBuffer;
 	}
 
-	void VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
+	void VertexArray::SetIndexBuffer(Ref<IndexBuffer> indexBuffer)
 	{
 		indexBuffer->Bind();
 		m_IndexBuffer = indexBuffer;
 	}
 
+	Ref<UniformBuffer> UniformBuffer::Create(uint32_t size, uint32_t binding)
+	{
+		return CreateRef<UniformBuffer>(size, binding);
+	}
+
 	UniformBuffer::UniformBuffer(uint32_t size, uint32_t binding)
+		: m_Size(size)
 	{
 		glCreateBuffers(1, &m_RendererId);
-		glNamedBufferData(m_RendererId, size, nullptr, GL_DYNAMIC_DRAW);
+		glNamedBufferData(m_RendererId, m_Size, nullptr, GL_DYNAMIC_DRAW);
 		glBindBufferBase(GL_UNIFORM_BUFFER, binding, m_RendererId);
 	}
 
 	UniformBuffer::~UniformBuffer()
 	{
 		glDeleteBuffers(1, &m_RendererId);
+	}
+
+	void UniformBuffer::SetData(const void* data) const
+	{
+		glNamedBufferSubData(m_RendererId, 0, m_Size, data);
 	}
 
 	void UniformBuffer::SetData(const void* data, uint32_t size, uint32_t offset) const

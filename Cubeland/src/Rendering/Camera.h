@@ -2,11 +2,17 @@
 
 #include <glm/glm.hpp>
 
-#include "Events/ApplicationEvent.h"
 #include "Events/MouseEvent.h"
 
 namespace Cubeland
 {
+	struct CameraData
+	{
+		glm::mat4 Model;
+		glm::mat4 View;
+		glm::mat4 Projection;
+	};
+
 	class Camera
 	{
 	public:
@@ -14,14 +20,14 @@ namespace Cubeland
 		Camera(float fov, float nearClip, float farClip);
 		~Camera() = default;
 
-		void OnEvent(Event& e);
-
 		void SetViewportSize(const float width, const float height)
 		{
 			m_ViewportWidth = width;
 			m_ViewportHeight = height;
 			UpdateProjection();
 		}
+
+		void OnMouseMoved(MouseMovedEvent& e);
 
 		const glm::mat4& GetView() const { return m_ViewMatrix; }
 		const glm::mat4& GetProjection() const { return m_ProjectionMatrix; }
@@ -36,9 +42,6 @@ namespace Cubeland
 		glm::vec3 GetUpDirection() const;
 		glm::vec3 GetRightDirection() const;
 		glm::vec3 GetForwardDirection() const;
-
-		bool OnWindowResized(WindowResizedEvent& e);
-		bool OnMouseMoved(MouseMovedEvent& e);
 
 	private:
 		float m_Fov, m_AspectRatio, m_NearClip, m_FarClip;

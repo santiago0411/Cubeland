@@ -19,8 +19,12 @@ namespace Cubeland
 		void OnAttach() override;
 		void OnDetach() override;
 		void OnUpdate(float ts) override;
+		void OnImGuiRender() override;
 		void OnEvent(Event& e) override;
 
+	private:
+		bool OnWindowResized(WindowResizedEvent& e);
+		bool OnMouseMoved(MouseMovedEvent& e);
 
 	private:
 		Camera m_Camera;

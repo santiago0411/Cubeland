@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/MouseCodes.h"
+#include "Events/Event.h"
 
 namespace Cubeland
 {

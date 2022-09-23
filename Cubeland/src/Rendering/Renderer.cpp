@@ -11,4 +11,10 @@ namespace Cubeland
 		vertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, (int)count, GL_UNSIGNED_INT, nullptr);
 	}
+
+	void Renderer::DrawStaticMesh(const Ref<StaticMesh>& staticMesh, const Camera& camera)
+	{
+		staticMesh->Bind();
+		glDrawElements(GL_TRIANGLES, (int)staticMesh->GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
+	}
 }

@@ -15,10 +15,12 @@ namespace Cubeland
 		Compute
 	};
 
+	using ShaderFilesMap = std::unordered_map<ShaderType, Utils::Filepath>;
+
 	class Shader
 	{
 	public:
-		Shader(std::string name, const std::unordered_map<ShaderType, Utils::Filepath>& shaderSources);
+		Shader(std::string name, const ShaderFilesMap& shaderSources);
 		~Shader();
 
 		void Bind() const;

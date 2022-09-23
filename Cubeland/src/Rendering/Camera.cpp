@@ -16,16 +16,9 @@ namespace Cubeland
 		glm::vec2 widthHeight = Application::Get().GetWindow().GetWidthAndHeight();
 		m_ViewportWidth = widthHeight.x;
 		m_ViewportHeight = widthHeight.y;
-		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
+
 		UpdateProjection();
 		UpdateView();
-	}
-
-	void Camera::OnEvent(Event& e)
-	{
-		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowResizedEvent>(CL_BIND_EVENT_FN(Camera::OnWindowResized));
-		dispatcher.Dispatch<MouseMovedEvent>(CL_BIND_EVENT_FN(Camera::OnMouseMoved));
 	}
 
 	void Camera::UpdateView()
@@ -74,15 +67,8 @@ namespace Cubeland
 		return glm::rotate(GetOrientation(), glm::vec3(0.0f, 0.0f, -1.0f));
 	}
 
-	bool Camera::OnWindowResized(WindowResizedEvent& e)
-	{
-		SetViewportSize((float)e.GetWidth(), (float)e.GetHeight());
-		return false;
-	}
-
-	bool Camera::OnMouseMoved(MouseMovedEvent& e)
+	void Camera::OnMouseMoved(MouseMovedEvent& e)
 	{
 		Rotate({ e.GetX(), e.GetY() });
-		return false;
 	}
 }

@@ -2,7 +2,7 @@
 
 layout(location = 0) in vec3 a_Position;
 
-layout(std140, binding = 0) uniform Camera
+layout(std140, binding = 0) uniform CameraData
 {
 	mat4 u_Model;
 	mat4 u_View;

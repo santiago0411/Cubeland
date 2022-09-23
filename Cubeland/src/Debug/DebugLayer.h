@@ -5,7 +5,7 @@
 #include "Rendering/Camera.h"
 #include "Rendering/Buffer.h"
 #include "Rendering/Shader.h"
-
+#include "Rendering/StaticMesh.h"
 
 namespace Cubeland
 {
@@ -21,8 +21,8 @@ namespace Cubeland
 
 	private:
 		Camera m_Camera;
+		Ref<StaticMesh> m_CubeMesh;
 
-		Ref<VertexArray> m_VertexArray;
 		Ref<UniformBuffer> m_CameraUniformBuffer;
 		Scope<Shader> m_Shader;
 	};

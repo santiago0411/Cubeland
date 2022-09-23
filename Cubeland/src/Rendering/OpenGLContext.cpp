@@ -31,14 +31,13 @@ namespace Cubeland
 
 	void OpenGLContext::Init(GLFWwindow* window)
 	{
-		if (s_Initialized)
-			return;
-
 		glfwMakeContextCurrent(window);
-
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+		if (s_Initialized)
+			return;
 
 		int success = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		CL_ASSERT(success, "Failed to initialize OpenGLContext!")

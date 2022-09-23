@@ -4,7 +4,7 @@
 
 namespace Cubeland
 {
-	int Main(int argc, char** argv)
+	inline int Main(int argc, char** argv)
 	{
 		Log::Init();
 		auto* app = new Application({ argc, argv });

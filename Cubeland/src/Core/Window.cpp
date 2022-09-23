@@ -66,11 +66,7 @@ namespace Cubeland
 
 	void Window::SetVSync(bool enabled)
 	{
-		if (enabled)
-			glfwSwapInterval(1);
-		else
-			glfwSwapInterval(0);
-
+		glfwSwapInterval(enabled);
 		m_Data.VSync = enabled;
 	}
 
@@ -100,7 +96,7 @@ namespace Cubeland
 			monitorX + (int32_t)((videoMode->width - m_Data.Width) / 2),
 			monitorY + (int32_t)((videoMode->height - m_Data.Height) / 2));
 
-		// Finally show the window and increase the window count
+		// Finally show the window
 		glfwShowWindow(m_Window);
 	}
 
