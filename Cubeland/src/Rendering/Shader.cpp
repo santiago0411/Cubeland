@@ -14,9 +14,6 @@
 #define OPENGL_SHADER_CACHE_DIR	"assets/cache/shader/opengl"
 #define OPENGL_CACHED_VERT_EXT	".opengl.vert.cache"
 #define OPENGL_CACHED_FRAG_EXT	".opengl.frag.cache"
-#define OPENGL_CACHED_TESS_EXT	".opengl.tess.cache"
-#define OPENGL_CACHED_GEO_EXT	".opengl.geo.cache"
-#define OPENGL_CACHED_COMP_EXT	".opengl.comp.cache"
 
 namespace Cubeland
 {
@@ -44,12 +41,6 @@ namespace Cubeland
 				return "GL_VERTEX_SHADER";
 			case GL_FRAGMENT_SHADER:
 				return "GL_FRAGMENT_SHADER";
-			case GL_TESS_CONTROL_SHADER:
-				return "GL_TESS_CONTROL_SHADER";
-			case GL_GEOMETRY_SHADER:
-				return "GL_GEOMETRY_SHADER";
-			case GL_COMPUTE_SHADER:
-				return "GL_COMPUTE_SHADER";
 		}
 
 		CL_ASSERT(false);
@@ -62,14 +53,8 @@ namespace Cubeland
 		{
 			case ShaderType::Vertex: 
 				return GL_VERTEX_SHADER;
-			case ShaderType::Tessellation: 
-				return GL_TESS_CONTROL_SHADER;
-			case ShaderType::Geometry: 
-				return GL_GEOMETRY_SHADER;
 			case ShaderType::Fragment:
 				return GL_FRAGMENT_SHADER;
-			case ShaderType::Compute: 
-				return GL_COMPUTE_SHADER;
 		}
 
 		CL_ASSERT(false);
@@ -86,17 +71,8 @@ namespace Cubeland
 			case ShaderType::Vertex:
 				extension = OPENGL_CACHED_VERT_EXT;
 				break;
-			case ShaderType::Tessellation:
-				extension = OPENGL_CACHED_TESS_EXT;
-				break;
-			case ShaderType::Geometry:
-				extension = OPENGL_CACHED_GEO_EXT;
-				break;
 			case ShaderType::Fragment:
 				extension = OPENGL_CACHED_FRAG_EXT;
-				break;
-			case ShaderType::Compute:
-				extension = OPENGL_CACHED_COMP_EXT;
 				break;
 			default:
 				CL_ASSERT(false)
@@ -104,32 +80,6 @@ namespace Cubeland
 		}
 
 		return cachePath / (shaderName + extension);
-	}
-
-	static void Reflect(GLenum stage, const std::vector<uint32_t>& shaderData, const char* shaderName)
-	{
-		spirv_cross::Compiler compiler(shaderData);
-		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
-
-		CL_LOG_TRACE("Shader::Reflect - {0} {1}", GLShaderStageToString(stage), shaderName);
-		CL_LOG_TRACE("    {0} uniform buffers", resources.uniform_buffers.size());
-		CL_LOG_TRACE("    {0} resources", resources.sampled_images.size());
-
-		if (!resources.uniform_buffers.empty())
-			CL_LOG_TRACE("Uniform buffers:");
-
-		for (const auto& [id, typeId, baseTypeId, name] : resources.uniform_buffers)
-		{
-			const auto& bufferType = compiler.get_type(baseTypeId);
-			size_t bufferSize = compiler.get_declared_struct_size(bufferType);
-			uint32_t binding = compiler.get_decoration(id, spv::DecorationBinding);
-			size_t memberCount = bufferType.member_types.size();
-
-			CL_LOG_TRACE("  {0}", name);
-			CL_LOG_TRACE("    Size = {0}", bufferSize);
-			CL_LOG_TRACE("    Binding = {0}", binding);
-			CL_LOG_TRACE("    Members = {0}", memberCount);
-		}
 	}
 
 	Shader::Shader(std::string name, const std::unordered_map<ShaderType, Filepath>& shaderSources)
@@ -159,7 +109,7 @@ namespace Cubeland
 
 #if !defined(APP_DIST)
 		for (auto&& [stage, source] : m_OpenGLSpirv)
-			Reflect(stage, source, m_Name.c_str());
+			ReflectAndCreateBuffers(stage, source, m_Name.c_str());
 #endif
 	}
 
@@ -171,12 +121,6 @@ namespace Cubeland
 	void Shader::Bind() const
 	{
 		glUseProgram(m_RendererId);
-	}
-
-	void Shader::UploadMat4(const std::string& uniformName, const glm::mat4& mat4) const
-	{
-		const auto location = glGetUniformLocation(m_RendererId, uniformName.c_str());
-		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat4));
 	}
 
 	void Shader::CompileOpenGLBinaries(const ShaderSourceInfo& shaderSourceInfo)
@@ -238,5 +182,40 @@ namespace Cubeland
 		}
 
 		m_RendererId = program;
+	}
+
+	void Shader::ReflectAndCreateBuffers(uint32_t stage, const std::vector<uint32_t>& shaderData, const char* shaderName)
+	{
+		spirv_cross::Compiler compiler(shaderData);
+		spirv_cross::ShaderResources resources = compiler.get_shader_resources();
+
+		CL_LOG_TRACE("Shader::Reflect - {0} {1}", GLShaderStageToString(stage), shaderName);
+		CL_LOG_TRACE("    {0} uniform buffers", resources.uniform_buffers.size());
+		CL_LOG_TRACE("    {0} resources", resources.sampled_images.size());
+
+		if (!resources.uniform_buffers.empty())
+			CL_LOG_TRACE("Uniform buffers:");
+
+		for (const auto& [id, typeId, baseTypeId, name] : resources.uniform_buffers)
+		{
+			const auto& bufferType = compiler.get_type(baseTypeId);
+			size_t bufferSize = compiler.get_declared_struct_size(bufferType);
+			uint32_t binding = compiler.get_decoration(id, spv::DecorationBinding);
+			size_t memberCount = bufferType.member_types.size();
+
+			CL_LOG_TRACE("  {0}", name);
+			CL_LOG_TRACE("    Size = {0}", bufferSize);
+			CL_LOG_TRACE("    Binding = {0}", binding);
+			CL_LOG_TRACE("    Members = {0}", memberCount);
+
+			m_UniformBuffersSet[binding] = UniformBuffer::Create((uint32_t)bufferSize, binding);
+			CL_LOG_DEBUG("Created UniformBuffer {} at binding {}.", name, binding);
+		}
+
+		if (!resources.sampled_images.empty())
+			CL_LOG_TRACE("Resources:");
+
+		for (const auto& sampledImage : resources.sampled_images)
+			CL_LOG_TRACE("  {0}", sampledImage.name);
 	}
 }

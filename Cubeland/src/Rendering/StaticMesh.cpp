@@ -4,14 +4,14 @@
 namespace Cubeland
 {
 	static float g_CubeVertices[] = {
-		-1.0f,  1.0f,   1.0f,
-		 1.0f,  1.0f,   1.0f,
-		-1.0f, -1.0f,   1.0f,
-		 1.0f, -1.0f,   1.0f,
-		-1.0f,  1.0f,  -1.0f,
-		 1.0f,  1.0f,  -1.0f,
-		-1.0f, -1.0f,  -1.0f,
-		 1.0f, -1.0f,  -1.0f,
+		-1.0f,  1.0f,   1.0f, // LEFT UP FRONT
+		 1.0f,  1.0f,   1.0f, // RIGHT UP FRONT
+		-1.0f, -1.0f,   1.0f, // LEFT DOWN FRONT
+		 1.0f, -1.0f,   1.0f, // RIGHT DOWN FRONT
+		-1.0f,  1.0f,  -1.0f, // LEFT UP BACK
+		 1.0f,  1.0f,  -1.0f, // RIGHT UP BACK
+		-1.0f, -1.0f,  -1.0f, // LEFT DOWN BACK
+		 1.0f, -1.0f,  -1.0f, // RIGHT DOWN BACK
 	};
 
 	static uint32_t g_CubeIndices[] = {
@@ -30,17 +30,17 @@ namespace Cubeland
 	};
 
 	static BufferLayout g_CubeVerticesLayout = {
-		{ "a_Position", BufferDataType::Float3 }
+		{ "a_Position", ShaderDataType::Float3 }
 	};
 
 	Ref<StaticMesh> StaticMesh::CreateCube()
 	{
-		return CreateRef<StaticMesh>(g_CubeVertices, std::size(g_CubeVertices), g_CubeVerticesLayout, g_CubeIndices, std::size(g_CubeIndices));
+		return Create({ g_CubeVertices, std::size(g_CubeVertices), g_CubeVerticesLayout, g_CubeIndices, std::size(g_CubeIndices) });
 	}
 
-	Ref<StaticMesh> StaticMesh::Create(float* vertices, uint32_t verticesCount, const BufferLayout& verticesLayout, uint32_t* indices, uint32_t indicesCount)
+	Ref<StaticMesh> StaticMesh::Create(const StaticMeshSpec& spec)
 	{
-		return  CreateRef<StaticMesh>(vertices, verticesCount, verticesLayout, indices, indicesCount);;
+		return CreateRef<StaticMesh>(spec);
 	}
 
 	void StaticMesh::Bind() const
@@ -49,12 +49,12 @@ namespace Cubeland
 		m_IndexBuffer->Bind();
 	}
 
-	StaticMesh::StaticMesh(float* vertices, uint32_t verticesCount, const BufferLayout& verticesLayout, uint32_t* indices, uint32_t indicesCount)
+	StaticMesh::StaticMesh(const StaticMeshSpec& spec)
 	{
-		m_VertexBuffer = VertexBuffer::Create(vertices, verticesCount);
-		m_VertexBuffer->SetLayout(verticesLayout);
+		m_VertexBuffer = VertexBuffer::Create(spec.Vertices, spec.VerticesCount);
+		m_VertexBuffer->SetLayout(spec.VerticesLayout);
 
-		m_IndexBuffer = IndexBuffer::Create(indices, indicesCount);
+		m_IndexBuffer = IndexBuffer::Create(spec.Indices, spec.IndicesCount);
 
 		m_VertexArray = VertexArray::Create();
 		m_VertexArray->SetVertexBuffer(m_VertexBuffer);

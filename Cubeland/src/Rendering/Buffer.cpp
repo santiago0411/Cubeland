@@ -5,25 +5,25 @@
 
 namespace Cubeland
 {
-	static GLenum BufferDataTypeToOpenGLType(const BufferDataType type)
+	static GLenum BufferDataTypeToOpenGLType(const ShaderDataType type)
 	{
 		switch (type)
 		{
-			case BufferDataType::Float:
-			case BufferDataType::Float2:
-			case BufferDataType::Float3:
-			case BufferDataType::Float4:
-			case BufferDataType::Mat3:
-			case BufferDataType::Mat4:
+			case ShaderDataType::Float:
+			case ShaderDataType::Float2:
+			case ShaderDataType::Float3:
+			case ShaderDataType::Float4:
+			case ShaderDataType::Mat3:
+			case ShaderDataType::Mat4:
 				return GL_FLOAT;
 
-			case BufferDataType::Int:
-			case BufferDataType::Int2:
-			case BufferDataType::Int3:
-			case BufferDataType::Int4:
+			case ShaderDataType::Int:
+			case ShaderDataType::Int2:
+			case ShaderDataType::Int3:
+			case ShaderDataType::Int4:
 				return GL_INT;
 
-			case BufferDataType::Bool:
+			case ShaderDataType::Bool:
 				return GL_BOOL;
 		}
 
@@ -31,9 +31,55 @@ namespace Cubeland
 		return 0;
 	}
 
+	static const char* BufferDataTypeToString(const ShaderDataType type)
+	{
+		switch (type)
+		{
+			case ShaderDataType::Float:
+				return "float";
+			case ShaderDataType::Float2:
+				return "vec2";
+			case ShaderDataType::Float3:
+				return "vec3";
+			case ShaderDataType::Float4:
+				return "vec4";
+			case ShaderDataType::Mat3:
+				return "mat3";
+			case ShaderDataType::Mat4:
+				return "mat4";
+
+			case ShaderDataType::Int:
+				return "int";
+			case ShaderDataType::Int2:
+				return "ivec2";
+			case ShaderDataType::Int3:
+				return "ivec3";
+			case ShaderDataType::Int4:
+				return "ivec4";
+
+			case ShaderDataType::Bool:
+				return "bool";
+		}
+
+		CL_ASSERT(false);
+		return "";
+	}
+
+	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	{
+		return CreateRef<VertexBuffer>(size);
+	}
+
 	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t count)
 	{
 		return CreateRef<VertexBuffer>(vertices, count);
+	}
+
+	VertexBuffer::VertexBuffer(uint32_t size)
+	{
+		glCreateBuffers(1, &m_RendererId);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 	}
 
 	VertexBuffer::VertexBuffer(float* vertices, uint32_t count)
@@ -51,6 +97,24 @@ namespace Cubeland
 	void VertexBuffer::Bind() const
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+	}
+
+	void VertexBuffer::SetData(const void* data, uint32_t size) const
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	}
+
+	void VertexBuffer::Reflect() const
+	{
+		CL_LOG_TRACE("VertexBuffer::Reflect - {} Attributes", m_Layout.Count());
+		uint32_t i = 0;
+		for (const auto& element : m_Layout)
+		{
+			CL_LOG_TRACE("    {} - Location: {}, Offset: {}, Type: {}, Normalized: {}", 
+				element.Name, i, element.Offset, BufferDataTypeToString(element.Type), element.Normalized ? "GL_TRUE" : "GL_FALSE");
+			i++;
+		}
 	}
 
 	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
@@ -110,10 +174,10 @@ namespace Cubeland
 		{
 			switch(element.Type)
 			{
-				case BufferDataType::Float:
-				case BufferDataType::Float2:
-				case BufferDataType::Float3:
-				case BufferDataType::Float4:
+				case ShaderDataType::Float:
+				case ShaderDataType::Float2:
+				case ShaderDataType::Float3:
+				case ShaderDataType::Float4:
 				{
 					glEnableVertexAttribArray(vertexIndex);
 					glVertexAttribPointer(vertexIndex, element.Count(),
@@ -123,11 +187,11 @@ namespace Cubeland
 						(const void*)element.Offset);
 					break;
 				}
-				case BufferDataType::Int:
-				case BufferDataType::Int2:
-				case BufferDataType::Int3:
-				case BufferDataType::Int4:
-				case BufferDataType::Bool:
+				case ShaderDataType::Int:
+				case ShaderDataType::Int2:
+				case ShaderDataType::Int3:
+				case ShaderDataType::Int4:
+				case ShaderDataType::Bool:
 				{
 					glEnableVertexAttribArray(vertexIndex);
 					glVertexAttribIPointer(vertexIndex, element.Count(),
@@ -137,8 +201,8 @@ namespace Cubeland
 					break;
 				}
 
-				case BufferDataType::Mat3:
-				case BufferDataType::Mat4:
+				case ShaderDataType::Mat3:
+				case ShaderDataType::Mat4:
 				{
 					const uint8_t count = element.Count();
 					for (uint8_t i = 0; i < count; i++)

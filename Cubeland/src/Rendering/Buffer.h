@@ -6,7 +6,7 @@
 
 namespace Cubeland
 {
-	enum class BufferDataType
+	enum class ShaderDataType
 	{
 		Float,
 		Float2,
@@ -24,28 +24,28 @@ namespace Cubeland
 	struct BufferElement
 	{
 		std::string Name;
-		BufferDataType Type;
+		ShaderDataType Type;
 		uint16_t Offset;
 		bool Normalized;
 
-		BufferElement(std::string&& name, const BufferDataType type, const bool normalized = false)
+		BufferElement(std::string&& name, const ShaderDataType type, const bool normalized = false)
 			: Name(name), Type(type), Offset(0), Normalized(normalized) {}
 
 		uint8_t Size() const
 		{
 			switch (Type)
 			{
-				case BufferDataType::Float:		return 4;
-				case BufferDataType::Float2:	return 4 * 2;
-				case BufferDataType::Float3:	return 4 * 3;
-				case BufferDataType::Float4:	return 4 * 4;
-				case BufferDataType::Int:		return 4;
-				case BufferDataType::Int2:		return 4 * 2;
-				case BufferDataType::Int3:		return 4 * 3;
-				case BufferDataType::Int4:		return 4 * 4;
-				case BufferDataType::Mat3:		return 4 * 3 * 3;
-				case BufferDataType::Mat4:		return 4 * 4 * 4;
-				case BufferDataType::Bool:		return 1;
+				case ShaderDataType::Float:		return 4;
+				case ShaderDataType::Float2:	return 4 * 2;
+				case ShaderDataType::Float3:	return 4 * 3;
+				case ShaderDataType::Float4:	return 4 * 4;
+				case ShaderDataType::Int:		return 4;
+				case ShaderDataType::Int2:		return 4 * 2;
+				case ShaderDataType::Int3:		return 4 * 3;
+				case ShaderDataType::Int4:		return 4 * 4;
+				case ShaderDataType::Mat3:		return 4 * 3 * 3;
+				case ShaderDataType::Mat4:		return 4 * 4 * 4;
+				case ShaderDataType::Bool:		return 1;
 			}
 
 			CL_ASSERT(false);
@@ -56,17 +56,17 @@ namespace Cubeland
 		{
 			switch (Type)
 			{
-				case BufferDataType::Float:		return 1;
-				case BufferDataType::Float2:	return 2;
-				case BufferDataType::Float3:	return 3;
-				case BufferDataType::Float4:	return 4;
-				case BufferDataType::Int:		return 1;
-				case BufferDataType::Int2:		return 2;
-				case BufferDataType::Int3:		return 3;
-				case BufferDataType::Int4:		return 4;
-				case BufferDataType::Mat3:		return 3;
-				case BufferDataType::Mat4:		return 4;
-				case BufferDataType::Bool:		return 1;
+				case ShaderDataType::Float:		return 1;
+				case ShaderDataType::Float2:	return 2;
+				case ShaderDataType::Float3:	return 3;
+				case ShaderDataType::Float4:	return 4;
+				case ShaderDataType::Int:		return 1;
+				case ShaderDataType::Int2:		return 2;
+				case ShaderDataType::Int3:		return 3;
+				case ShaderDataType::Int4:		return 4;
+				case ShaderDataType::Mat3:		return 3;
+				case ShaderDataType::Mat4:		return 4;
+				case ShaderDataType::Bool:		return 1;
 			}
 
 			CL_ASSERT(false);
@@ -85,6 +85,7 @@ namespace Cubeland
 		}
 
 		uint16_t GetStride() const { return m_Stride; }
+		size_t Count() const { return m_Layout.size(); }
 
 		std::vector<BufferElement>::iterator begin() { return m_Layout.begin(); }
 		std::vector<BufferElement>::iterator end() { return  m_Layout.end(); }
@@ -112,14 +113,20 @@ namespace Cubeland
 	class VertexBuffer
 	{
 	public:
+		static Ref<VertexBuffer> Create(uint32_t size);
 		static Ref<VertexBuffer> Create(float* vertices, uint32_t count);
+		VertexBuffer(uint32_t size);
 		VertexBuffer(float* vertices, uint32_t count);
 		~VertexBuffer();
 
 		void Bind() const;
 
+		void SetData(const void* data, uint32_t size) const;
+
 		const BufferLayout& GetLayout() const { return m_Layout; }
 		void SetLayout(const BufferLayout& layout) { m_Layout = layout; }
+
+		void Reflect() const;
 
 	private:
 		BufferLayout m_Layout;
@@ -150,6 +157,7 @@ namespace Cubeland
 
 		void Bind() const;
 
+		const Ref<VertexBuffer>& GetVertexBuffer() const { return m_VertexBuffer; }
 		const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
 
 		void SetVertexBuffer(Ref<VertexBuffer> vertexBuffer);

@@ -2,11 +2,13 @@
 #include "Camera.h"
 
 #include "Core/Application.h"
+#include "Core/Input.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
 constexpr float ROTATION_SPEED = 0.8f;
+constexpr float MOV_SPEED = 10.0f;
 
 namespace Cubeland
 {
@@ -65,6 +67,51 @@ namespace Cubeland
 	glm::vec3 Camera::GetForwardDirection() const
 	{
 		return glm::rotate(GetOrientation(), glm::vec3(0.0f, 0.0f, -1.0f));
+	}
+
+	void Camera::OnUpdate(float ts)
+	{
+		float velocity = ts * MOV_SPEED;
+		bool moved = false;
+
+		if (Input::IsKeyPressed(KeyCode::W))
+		{
+			m_FocalPoint += GetForwardDirection() * velocity;
+			moved = true;
+		}
+
+		if (Input::IsKeyPressed(KeyCode::S))
+		{
+			m_FocalPoint += -GetForwardDirection() * velocity;
+			moved = true;
+		}
+
+		if (Input::IsKeyPressed(KeyCode::A))
+		{
+			m_FocalPoint += -GetRightDirection() * velocity;
+			moved = true;
+		}
+
+		if (Input::IsKeyPressed(KeyCode::D))
+		{
+			m_FocalPoint += GetRightDirection() * velocity;
+			moved = true;
+		}
+
+		if (Input::IsKeyPressed(KeyCode::LeftShift))
+		{
+			m_FocalPoint += -GetUpDirection() * velocity / 2.0f;
+			moved = true;
+		}
+
+		if (Input::IsKeyPressed(KeyCode::Space))
+		{
+			m_FocalPoint += GetUpDirection() * velocity / 2.0f;
+			moved = true;
+		}
+
+		if (moved)
+			UpdateView();
 	}
 
 	void Camera::OnMouseMoved(MouseMovedEvent& e)

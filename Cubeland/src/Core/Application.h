@@ -27,6 +27,7 @@ namespace Cubeland
 	{
 	public:
 		explicit Application(const CommandLineArguments& args);
+		~Application();
 
 		void Run();
 		void OnEvent(Event& e);

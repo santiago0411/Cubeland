@@ -26,6 +26,8 @@ namespace Cubeland
 		bool OnWindowResized(WindowResizedEvent& e);
 		bool OnMouseMoved(MouseMovedEvent& e);
 
+		void Move(float ts);
+
 	private:
 		Camera m_Camera;
 	};

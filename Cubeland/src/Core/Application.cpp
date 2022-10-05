@@ -2,11 +2,11 @@
 #include "Application.h"
 
 #include "Core/Base.h"
-#include "Debug/DebugLayer.h"
 
 #include "Game/GameLayer.h"
 
 #include "Rendering/OpenGLContext.h"
+#include "Rendering/Renderer.h"
 
 #include <GLFW/glfw3.h>
 #include <ranges>
@@ -17,14 +17,24 @@ namespace Cubeland
 
 	Application::Application(const CommandLineArguments& args)
 	{
+		CL_LOG_DEBUG("Starting Application.");
 		CL_ASSERT(!s_Instance, "APPLICATION INSTANCE ALREADY EXISTS.");
 		s_Instance = this;
 
 		m_Window = Window::Create(1920, 1080);
 		m_Window->SetEventCallback(CL_BIND_EVENT_FN(Application::OnEvent));
 
-		// m_LayerStack.PushLayer(new GameLayer());
-		m_LayerStack.PushLayer(new DebugLayer());
+		Renderer::Init();
+
+		m_LayerStack.PushLayer(new GameLayer());
+		CL_LOG_DEBUG("Application start up successful.");
+	}
+
+	Application::~Application()
+	{
+		CL_LOG_DEBUG("Shutting down application.");
+		Renderer::Shutdown();
+		CL_LOG_DEBUG("Application shutdown successful.");
 	}
 
 	void Application::Run()

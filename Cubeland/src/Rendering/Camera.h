@@ -6,13 +6,6 @@
 
 namespace Cubeland
 {
-	struct CameraData
-	{
-		glm::mat4 Model;
-		glm::mat4 View;
-		glm::mat4 Projection;
-	};
-
 	class Camera
 	{
 	public:
@@ -27,6 +20,7 @@ namespace Cubeland
 			UpdateProjection();
 		}
 
+		void OnUpdate(float ts);
 		void OnMouseMoved(MouseMovedEvent& e);
 
 		const glm::mat4& GetView() const { return m_ViewMatrix; }
