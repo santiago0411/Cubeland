@@ -49,7 +49,7 @@ namespace Cubeland
 
 		CL_ASSERT(GLVersion.major > 4 || GLVersion.major == 4 && GLVersion.minor >= 5, "Cubeland requires at least OpenGL version 4.5!");
 
-#if defined(APP_DEBUG)
+#if !defined(APP_DIST)
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(OpenGLMessageCallback, nullptr);

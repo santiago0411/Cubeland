@@ -132,7 +132,7 @@ namespace Cubeland
 
 		auto&& [stage, source, cachePath] = shaderSourceInfo;
 
-		shaderc::CompilationResult result = compiler.CompileGlslToSpv(source, GLShaderStageToShaderC(stage), m_Name.c_str());
+		shaderc::CompilationResult result = compiler.CompileGlslToSpv(source, GLShaderStageToShaderC(stage), m_Name.c_str(), options);
 		if (result.GetCompilationStatus() != shaderc_compilation_status_success)
 		{
 			CL_LOG_ERROR(result.GetErrorMessage());
