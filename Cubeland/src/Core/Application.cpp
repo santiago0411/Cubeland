@@ -26,6 +26,9 @@ namespace Cubeland
 
 		Renderer::Init();
 
+		m_ImGuiLayer = new ImGuiLayer();
+		m_LayerStack.PushOverlay(m_ImGuiLayer);
+
 		m_LayerStack.PushLayer(new GameLayer());
 		CL_LOG_DEBUG("Application start up successful.");
 	}
@@ -45,11 +48,18 @@ namespace Cubeland
 			const float ts = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			if (m_Minimized)
-				continue;
+			if (!m_Minimized)
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(ts);
 
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(ts);
+				m_ImGuiLayer->Begin();
+				{
+					for (Layer* layer : m_LayerStack)
+						layer->OnImGuiRender();
+				}
+				m_ImGuiLayer->End();
+			}
 
 			m_Window->OnUpdate();
 		}

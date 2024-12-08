@@ -7,6 +7,8 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 
+#include "ImGui/ImGuiLayer.h"
+
 #include "Utils/Assert.h"
 
 namespace Cubeland
@@ -33,6 +35,7 @@ namespace Cubeland
 		void OnEvent(Event& e);
 
 		const Window& GetWindow() const { return *m_Window; }
+		ImGuiLayer* GetImGuiLayer() const { return m_ImGuiLayer; }
 
 		static const Application& Get() { return *s_Instance; }
 
@@ -48,6 +51,8 @@ namespace Cubeland
 		bool m_Minimized = false;
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;
+		// LayerStack owns this pointer
+		ImGuiLayer* m_ImGuiLayer;
 	};
 }
 
