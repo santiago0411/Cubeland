@@ -6,9 +6,9 @@ namespace Cubeland
 {
 	struct GameTextures
 	{
-		static Ref<Texture2D> BlocksAtlasTexture;
-		static Ref<SubTexture2D> StoneSubTexture;
-		static Ref<SubTexture2D> DirtSubTexture;
+		static inline Ref<Texture2D> BlocksAtlasTexture = nullptr;
+		static inline Ref<SubTexture2D> StoneSubTexture = nullptr;
+		static inline Ref<SubTexture2D> DirtSubTexture = nullptr;
 
 		static void InitTextures();
 	};

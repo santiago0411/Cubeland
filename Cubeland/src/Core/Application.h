@@ -18,7 +18,7 @@ namespace Cubeland
 
 		const char* operator[](int32_t index) const
 		{
-			CL_ASSERT(index < Count)
+			CL_ASSERT(index < Count);
 			return Args[index];
 		}
 	};

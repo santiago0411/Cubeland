@@ -15,7 +15,7 @@
 #define CL_INTERNAL_ASSERT_GET_MACRO(...) CL_EXPAND_MACRO( CL_INTERNAL_ASSERT_GET_MACRO_NAME(__VA_ARGS__, CL_INTERNAL_ASSERT_WITH_MSG, CL_INTERNAL_ASSERT_NO_MSG) )
 
 // Currently accepts at least the condition and one additional parameter (the message) being optional
-#define CL_ASSERT(...) CL_EXPAND_MACRO( CL_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_, __VA_ARGS__) )
+#define CL_ASSERT(...) do { CL_EXPAND_MACRO( CL_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_, __VA_ARGS__) ) } while (0)
 #else
 #define CL_ASSERT(...)
 #endif

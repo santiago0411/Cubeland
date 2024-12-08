@@ -2,6 +2,8 @@
 
 #include <glm/vec4.hpp>
 
+#include "Rendering/Buffer.h"
+
 struct GLFWwindow;
 
 namespace Cubeland
@@ -14,5 +16,7 @@ namespace Cubeland
 		static void Clear();
 		static void SetViewport(uint32_t width, uint32_t height);
 		static void SetLineWidth(float width);
+
+		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0);
 	};
 }

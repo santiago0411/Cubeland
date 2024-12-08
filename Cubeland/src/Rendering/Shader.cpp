@@ -75,7 +75,7 @@ namespace Cubeland
 				extension = OPENGL_CACHED_FRAG_EXT;
 				break;
 			default:
-				CL_ASSERT(false)
+				CL_ASSERT(false);
 				return "";
 		}
 
@@ -107,10 +107,8 @@ namespace Cubeland
 		CreateProgram();
 		CL_LOG_DEBUG("Shader creation took {:.2f}ms.", timer.ElapsedMillis());
 
-#if !defined(APP_DIST)
 		for (auto&& [stage, source] : m_OpenGLSpirv)
 			ReflectAndCreateBuffers(stage, source, m_Name.c_str());
-#endif
 	}
 
 	Shader::~Shader()
@@ -208,7 +206,7 @@ namespace Cubeland
 			CL_LOG_TRACE("    Binding = {0}", binding);
 			CL_LOG_TRACE("    Members = {0}", memberCount);
 
-			m_UniformBuffersSet[binding] = UniformBuffer::Create((uint32_t)bufferSize, binding);
+			m_UniformBuffersSet[name] = UniformBuffer::Create((uint32_t)bufferSize, binding);
 			CL_LOG_DEBUG("Created UniformBuffer {} at binding {}.", name, binding);
 		}
 

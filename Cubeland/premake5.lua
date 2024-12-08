@@ -19,12 +19,13 @@ project "Cubeland"
 	includedirs
 	{
 		"src",
-		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.Glad}",
+		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.VulkanSDK}",
 	}
 

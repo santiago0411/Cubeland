@@ -160,7 +160,7 @@ namespace Cubeland
 		glBindVertexArray(m_RendererId);
 	}
 
-	void VertexArray::SetVertexBuffer(Ref<VertexBuffer> vertexBuffer)
+	void VertexArray::SetVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		CL_ASSERT(!m_VertexBuffer);
 
@@ -228,7 +228,7 @@ namespace Cubeland
 		m_VertexBuffer = vertexBuffer;
 	}
 
-	void VertexArray::SetIndexBuffer(Ref<IndexBuffer> indexBuffer)
+	void VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
 		indexBuffer->Bind();
 		m_IndexBuffer = indexBuffer;

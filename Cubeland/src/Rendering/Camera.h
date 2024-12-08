@@ -2,8 +2,6 @@
 
 #include <glm/glm.hpp>
 
-#include "Events/MouseEvent.h"
-
 namespace Cubeland
 {
 	class Camera
@@ -20,22 +18,11 @@ namespace Cubeland
 			UpdateProjection();
 		}
 
-		void OnUpdate(float ts);
-		void OnMouseMoved(MouseMovedEvent& e);
-
 		const glm::mat4& GetView() const { return m_ViewMatrix; }
 		const glm::mat4& GetProjection() const { return m_ProjectionMatrix; }
 
 	private:
-		void UpdateView();
 		void UpdateProjection();
-
-		void Rotate(const glm::vec2& mousePosition);
-
-		glm::quat GetOrientation() const;
-		glm::vec3 GetUpDirection() const;
-		glm::vec3 GetRightDirection() const;
-		glm::vec3 GetForwardDirection() const;
 
 	private:
 		float m_Fov, m_AspectRatio, m_NearClip, m_FarClip;

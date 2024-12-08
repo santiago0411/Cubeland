@@ -26,6 +26,7 @@ namespace Cubeland
 		bool IsVSync() const;
 
 		glm::vec2 GetWidthAndHeight() const { return { m_Data.Width, m_Data.Height }; }
+		bool IsFocused() const;
 
 		void* GetNativeWindow() const { return m_Window; }
 

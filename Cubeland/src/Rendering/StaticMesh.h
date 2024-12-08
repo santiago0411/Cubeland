@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include "Rendering/Buffer.h"
@@ -31,3 +32,4 @@ namespace Cubeland
 		Ref<IndexBuffer> m_IndexBuffer;
 	};
 }
+*/

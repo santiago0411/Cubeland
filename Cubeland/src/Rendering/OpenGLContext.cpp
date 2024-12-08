@@ -26,7 +26,7 @@ namespace Cubeland
 				return;
 		}
 
-		CL_ASSERT(false)
+		CL_ASSERT(false);
 	}
 
 	void OpenGLContext::Init(GLFWwindow* window)
@@ -40,7 +40,7 @@ namespace Cubeland
 			return;
 
 		int success = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		CL_ASSERT(success, "Failed to initialize OpenGLContext!")
+		CL_ASSERT(success, "Failed to initialize OpenGLContext!");
 
 		CL_LOG_INFO("OpenGL Info:");
 		CL_LOG_INFO("  Vendor: {0}", glGetString(GL_VENDOR));
@@ -82,5 +82,13 @@ namespace Cubeland
 	void OpenGLContext::SetLineWidth(float width)
 	{
 		glLineWidth(width);
+	}
+
+	void OpenGLContext::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
+	{
+		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		vertexArray->GetIndexBuffer()->Bind();
+		vertexArray->Bind();
+		glDrawElements(GL_TRIANGLES, (int)count, GL_UNSIGNED_INT, nullptr);
 	}
 }

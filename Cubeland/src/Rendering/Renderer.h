@@ -13,14 +13,11 @@ namespace Cubeland
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(const Camera& camera);
+		static void BeginScene(const Camera& camera, const glm::mat4& viewMatrix);
 		static void EndScene();
 		static void Flush();
 
 		static void DrawCube(const glm::vec3& pos, const Ref<SubTexture2D>& subTexture);
-
-		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0);
-		static void DrawStaticMesh(const Ref<StaticMesh>& staticMesh);
 
 		struct Statistics
 		{

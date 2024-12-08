@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "Renderer.h"
 
-#include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Shader.h"
-#include "Texture2D.h"
+#include "Rendering/OpenGLContext.h"
+#include "Rendering/Shader.h"
+#include "Rendering/Texture2D.h"
 
 namespace Cubeland
 {
@@ -204,11 +204,13 @@ namespace Cubeland
 		delete g_Data;
 	}
 
-	void Renderer::BeginScene(const Camera& camera)
+	void Renderer::BeginScene(const Camera& camera, const glm::mat4& viewMatrix)
 	{
-		g_Data->CameraBuffer.View = camera.GetView();
+		OpenGLContext::Clear();
+
+		g_Data->CameraBuffer.View = viewMatrix;
 		g_Data->CameraBuffer.Projection = camera.GetProjection();
-		g_Data->CubeShader->GetUniformBuffer(0)->SetData(&g_Data->CameraBuffer);
+		g_Data->CubeShader->GetUniformBuffer("CameraData")->SetData(&g_Data->CameraBuffer);
 
 		StartBatch();
 	}
@@ -220,7 +222,7 @@ namespace Cubeland
 
 	void Renderer::Flush()
 	{
-		if (g_Data->CubeIndexCount)
+		if (g_Data->CubeIndexCount > 0)
 		{
 			const auto dataSize = (uint32_t)((uint8_t*)g_Data->CubeVertexBufferPtr - (uint8_t*)g_Data->CubeVertexBufferBase);
 			g_Data->CubeVertexBuffer->SetData(g_Data->CubeVertexBufferBase, dataSize);
@@ -229,7 +231,7 @@ namespace Cubeland
 				g_Data->TextureSlots[i]->Bind(i);
 
 			g_Data->CubeShader->Bind();
-			DrawIndexed(g_Data->CubeVertexArray, g_Data->CubeIndexCount);
+			OpenGLContext::DrawIndexed(g_Data->CubeVertexArray, g_Data->CubeIndexCount);
 			g_Data->Stats.DrawCalls++;
 		}
 	}
@@ -246,6 +248,8 @@ namespace Cubeland
 
 		for (uint32_t i = 0; i < std::size(g_Data->CubeVertexPositions); i++)
 		{
+			// TODO top texture - if (someMappingArray[i] == CubeMesh::TopFace) use topTexCoords instead
+
 			g_Data->CubeVertexBufferPtr->Position = glm::translate(glm::mat4(1.0f), pos) * g_Data->CubeVertexPositions[i];
 			g_Data->CubeVertexBufferPtr->TextureCoords = texCoords[texIndices[i % 6]];
 			g_Data->CubeVertexBufferPtr->TextureId = textureIndex;
@@ -267,20 +271,6 @@ namespace Cubeland
 	{
 		Flush();
 		StartBatch();
-	}
-
-	void Renderer::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
-	{
-		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
-		vertexArray->GetIndexBuffer()->Bind();
-		vertexArray->Bind();
-		glDrawElements(GL_TRIANGLES, (int)count, GL_UNSIGNED_INT, nullptr);
-	}
-
-	void Renderer::DrawStaticMesh(const Ref<StaticMesh>& staticMesh)
-	{
-		staticMesh->Bind();
-		glDrawElements(GL_TRIANGLES, (int)staticMesh->GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
 	uint32_t Renderer::FindTextureIndex(const Ref<Texture2D>& texture)

@@ -160,8 +160,8 @@ namespace Cubeland
 		const Ref<VertexBuffer>& GetVertexBuffer() const { return m_VertexBuffer; }
 		const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
 
-		void SetVertexBuffer(Ref<VertexBuffer> vertexBuffer);
-		void SetIndexBuffer(Ref<IndexBuffer> indexBuffer);
+		void SetVertexBuffer(const Ref<VertexBuffer>& vertexBuffer);
+		void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer);
 
 	private:
 		Ref<VertexBuffer> m_VertexBuffer;

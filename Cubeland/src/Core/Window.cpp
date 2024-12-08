@@ -75,6 +75,11 @@ namespace Cubeland
 		return m_Data.VSync;
 	}
 
+	bool Window::IsFocused() const
+	{
+		return glfwGetWindowAttrib(m_Window, GLFW_FOCUSED);
+	}
+
 	void Window::CreateGlfwWindow()
 	{
 		int32_t count;
@@ -85,7 +90,7 @@ namespace Cubeland
 		glfwGetMonitorPos(monitors[0], &monitorX, &monitorY);
 		const GLFWvidmode* videoMode = glfwGetVideoMode(monitors[0]);
 
-		// Set the visibility hint to to false for the window creation
+		// Set the visibility hint to false for the window creation
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
 		// Create the glfw window
@@ -124,7 +129,7 @@ namespace Cubeland
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			switch (action)
-				{
+			{
 				case GLFW_PRESS:
 				{
 					KeyPressedEvent event((KeyCode)key, false);

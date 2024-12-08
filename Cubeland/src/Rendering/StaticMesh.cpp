@@ -1,4 +1,5 @@
 #include "pch.h"
+/*
 #include "StaticMesh.h"
 
 namespace Cubeland
@@ -61,3 +62,4 @@ namespace Cubeland
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 	}
 }
+*/

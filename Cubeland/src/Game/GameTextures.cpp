@@ -3,10 +3,6 @@
 
 namespace Cubeland
 {
-	Ref<Texture2D> GameTextures::BlocksAtlasTexture = nullptr;
-	Ref<SubTexture2D> GameTextures::StoneSubTexture = nullptr;
-	Ref<SubTexture2D> GameTextures::DirtSubTexture = nullptr;
-
 	void GameTextures::InitTextures()
 	{
 		CL_LOG_DEBUG("Initializing atlas texture and subtextures.");

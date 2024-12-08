@@ -4,9 +4,8 @@
 
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyboardEvent.h"
-#include "Events/MouseEvent.h"
 
-#include "Rendering/Camera.h"
+#include "Game/Entity.h"
 
 namespace Cubeland
 {
@@ -24,11 +23,9 @@ namespace Cubeland
 
 	private:
 		bool OnWindowResized(WindowResizedEvent& e);
-		bool OnMouseMoved(MouseMovedEvent& e);
-
-		void Move(float ts);
+		bool OnKeyPressed(KeyPressedEvent& e);
 
 	private:
-		Camera m_Camera;
+		Entity m_PlayerEntity;
 	};
 }

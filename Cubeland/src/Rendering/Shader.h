@@ -24,7 +24,7 @@ namespace Cubeland
 
 		void Bind() const;
 
-		const Ref<UniformBuffer>& GetUniformBuffer(uint32_t binding) const
+		const Ref<UniformBuffer>& GetUniformBuffer(const std::string& binding) const
 		{
 			CL_ASSERT(m_UniformBuffersSet.contains(binding));
 			return m_UniformBuffersSet.at(binding);
@@ -47,6 +47,6 @@ namespace Cubeland
 		std::string m_Name;
 
 		std::unordered_map<uint32_t, std::vector<uint32_t>> m_OpenGLSpirv;
-		std::map<uint32_t, Ref<UniformBuffer>> m_UniformBuffersSet;
+		std::map<std::string, Ref<UniformBuffer>> m_UniformBuffersSet;
 	};
 }
