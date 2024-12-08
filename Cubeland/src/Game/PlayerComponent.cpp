@@ -32,20 +32,30 @@ namespace Cubeland
 		TransformComponent& transform = Transform();
 
 		glm::mat4 rotationMatrix = transform.GetRotationMatrix();
-		glm::vec3 forwardDirection = glm::normalize(glm::vec3(rotationMatrix * glm::vec4(0, 0, -1, 0)));
-		glm::vec3 rightDirection = glm::normalize(glm::vec3(rotationMatrix * glm::vec4(1, 0, 0, 0)));
+		glm::vec3 forwardDirection = glm::vec3(rotationMatrix * glm::vec4(0, 0, -1, 0));
+		glm::vec3 rightDirection = glm::vec3(rotationMatrix * glm::vec4(1, 0, 0, 0));
+
+		// Project forward/right directions onto the XZ plane removing the vertical component
+		forwardDirection.y = 0.0f;
+		forwardDirection = glm::normalize(forwardDirection);
+
+		rightDirection.y = 0.0f;
+		rightDirection = glm::normalize(rightDirection);
+
+		const glm::vec3 forwardMovement = forwardDirection * velocity;
+		const glm::vec3 rightMovement = rightDirection * velocity;
 
 		if (Input::IsKeyPressed(KeyCode::W))
-			transform.Position += forwardDirection * velocity;
+			transform.Position += forwardMovement;
 
 		if (Input::IsKeyPressed(KeyCode::S))
-			transform.Position -= forwardDirection * velocity;
+			transform.Position -= forwardMovement;
 
 		if (Input::IsKeyPressed(KeyCode::A))
-			transform.Position -= rightDirection * velocity;
+			transform.Position -= rightMovement;
 
 		if (Input::IsKeyPressed(KeyCode::D))
-			transform.Position += rightDirection * velocity;
+			transform.Position += rightMovement;
 
 		if (Input::IsKeyPressed(KeyCode::LeftShift))
 			transform.Position.y -= velocity / 1.5f;
