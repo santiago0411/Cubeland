@@ -63,6 +63,18 @@ namespace Cubeland
 		return {};
 	}
 
+	Entity World::FindEntityByName(const std::string_view name)
+	{
+		const auto view = m_Registry.view<TagComponent>();
+		for (const auto entityId : view)
+		{
+			if (view.get<TagComponent>(entityId).Tag == name)
+				return { entityId, this };
+		}
+
+		return {};
+	}
+
 	Entity World::CreateEntity(const std::string& name)
 	{
 		return CreateEntity(UUID(), name);
@@ -150,14 +162,17 @@ namespace Cubeland
 		return {};
 	}
 
-	glm::mat4 World::GetWorldSpaceTransformMatrix(Entity entity)
+	glm::mat4 World::GetWorldSpaceTransformMatrix(Entity entity) const
 	{
 		glm::mat4 transform(1.0f);
-		Entity parent = TryGetEntityWithUUID(entity.GetParentUUID());
-		if (parent)
-			transform = GetWorldSpaceTransformMatrix(parent);
 
-		return transform * entity.GetComponent<TransformComponent>().GetTransform();
+		while (entity)
+		{
+			transform *= entity.GetComponent<TransformComponent>().GetTransform();
+			entity = TryGetEntityWithUUID(entity.GetParentUUID());
+		}
+
+		return transform;
 	}
 
 	bool World::CreateScriptableEntityInstance(ScriptComponent& sc, entt::entity handle, bool callOnCreate)

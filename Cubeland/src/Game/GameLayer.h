@@ -7,6 +7,8 @@
 
 #include "Game/Entity.h"
 
+#include "Rendering/Framebuffer.h"
+
 namespace Cubeland
 {
 	class GameLayer : public Layer
@@ -22,10 +24,13 @@ namespace Cubeland
 		void OnEvent(Event& e) override;
 
 	private:
-		bool OnWindowResized(WindowResizedEvent& e);
 		bool OnKeyPressed(KeyPressedEvent& e);
 
 	private:
 		Entity m_PlayerEntity;
+		Camera* m_GameCamera = nullptr;
+		glm::vec2 m_ViewportSize{0};
+
+		Ref<Framebuffer> m_Framebuffer;
 	};
 }

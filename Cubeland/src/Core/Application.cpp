@@ -3,6 +3,10 @@
 
 #include "Core/Base.h"
 
+#if defined(APP_DEBUG) || defined(APP_RELEASE)
+#include "Debug/DebugLayer.h"
+#endif
+
 #include "Game/GameLayer.h"
 
 #include "Rendering/OpenGLContext.h"
@@ -28,6 +32,10 @@ namespace Cubeland
 
 		m_ImGuiLayer = new ImGuiLayer();
 		m_LayerStack.PushOverlay(m_ImGuiLayer);
+
+#if defined(APP_DEBUG) || defined(APP_RELEASE)
+		m_LayerStack.PushLayer(new DebugLayer());
+#endif
 
 		m_LayerStack.PushLayer(new GameLayer());
 		CL_LOG_DEBUG("Application start up successful.");

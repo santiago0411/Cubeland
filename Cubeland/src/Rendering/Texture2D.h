@@ -21,6 +21,8 @@ namespace Cubeland
 		void SetData(const void* data, uint32_t size) const;
 		void Bind(uint32_t slot) const;
 
+		uint32_t GetRendererId() const { return m_RendererId; }
+
 		bool operator==(const Texture2D& other) const { return m_RendererId == other.m_RendererId; }
 
 	private:

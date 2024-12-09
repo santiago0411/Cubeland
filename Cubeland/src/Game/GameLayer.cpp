@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameLayer.h"
 
+#include "Core/Application.h"
 #include "Core/Input.h"
 
 #include "Game/GameTextures.h"
@@ -8,7 +9,10 @@
 #include "Game/ScriptableEntity.h"
 #include "Game/World.h"
 
+#include "Rendering/Framebuffer.h"
 #include "Rendering/Renderer.h"
+
+#include <imgui.h>
 
 namespace Cubeland
 {
@@ -17,12 +21,25 @@ namespace Cubeland
 		CL_LOG_DEBUG("Initializing GameLayer.");
 		GameTextures::InitTextures();
 
+		CL_LOG_DEBUG("Creating GameLayer framebuffer");
+		FramebufferSpecification framebufferSpec;
+		framebufferSpec.Attachments = {
+			FramebufferTextureFormat::RGBA8,
+			FramebufferTextureFormat::RED_INTEGER,
+			FramebufferTextureFormat::Depth,
+		};
+		framebufferSpec.Width = 1;
+		framebufferSpec.Height = 1;
+		m_Framebuffer = CreateRef<Framebuffer>(framebufferSpec);
+
 		auto* world = World::CreateNewWorld();
 		m_PlayerEntity = world->CreateEntity("Player");
 		m_PlayerEntity.AddComponent<ScriptComponent>().Bind<PlayerComponent>();
 
 		auto cameraEntity = world->CreateChildEntity(m_PlayerEntity, "Camera");
-		cameraEntity.AddComponent<CameraComponent>().Camera = Camera(45.0f, 0.1f, 100.0f);
+		auto& cc  = cameraEntity.AddComponent<CameraComponent>();
+		cc.Camera = Camera(45.0f, 0.1f, 100.0f);
+		m_GameCamera = &cc.Camera;
 
 		for (int y = 0; y < 2; y++)
 		{
@@ -48,30 +65,74 @@ namespace Cubeland
 
 	void GameLayer::OnUpdate(float ts)
 	{
-		World::GetActiveWorld()->OnUpdate(ts);
+		if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f)
+		{
+			const auto& spec = m_Framebuffer->GetSpecification();
+			if (glm::vec2(spec.Width, spec.Height) != m_ViewportSize)
+			{
+				m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+				m_GameCamera->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
+			}
+		}
+
+		Renderer::ResetStats();
+		m_Framebuffer->Bind();
+			World::GetActiveWorld()->OnUpdate(ts);
+		m_Framebuffer->Unbind();
 	}
 
 	void GameLayer::OnImGuiRender()
 	{
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar| 
+			ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | 
+			ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+		static bool open = true;
+		ImGui::Begin("Cubeland", &open, windowFlags);
+		ImGui::PopStyleVar(3); // Pop rounding, size, padding
+
+		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+		m_ViewportSize = { viewportSize.x, viewportSize.y };
+
+		const ImVec2 windowPos = ImGui::GetWindowPos();
+		const ImVec2 windowSize = ImGui::GetContentRegionAvail();
+		const ImVec2 windowPadding = ImGui::GetStyle().WindowPadding;
+
+		const ImVec2 imageStartPos = ImVec2(windowPos.x + windowPadding.x, windowPos.y + windowPadding.y);
+		const ImVec2 imageEndPos = ImVec2(imageStartPos.x + windowSize.x, imageStartPos.y + windowSize.y);
+
+		// Render the scene framebuffer as the background
+		ImGui::GetWindowDrawList()->AddImage(
+			(ImTextureID)m_Framebuffer->GetColorAttachmentRendererId(),
+			imageStartPos,
+			imageEndPos,
+			{ 0, 1 },   // UV top-left
+			{ 1, 0 }    // UV bottom-right
+		);
+
+		if (World::GetActiveWorld()->IsPaused())
+			ImGui::Text("PAUSED");
+
+		const auto& transform = m_PlayerEntity.GetComponent<TransformComponent>();
+		ImGui::Text("Player");
+		ImGui::Text("\tPosition: X: %.3f Y: %.3f Z: %.3f", transform.Position.x, transform.Position.y, transform.Position.z);
+		ImGui::Text("\tRotation: X: %.3f Y: %.3f Z: %.3f", transform.Rotation.x, transform.Rotation.y, transform.Rotation.z);
+
+		ImGui::End();
 	}
 
 	void GameLayer::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowResizedEvent>(CL_BIND_EVENT_FN(GameLayer::OnWindowResized));
 		dispatcher.Dispatch<KeyPressedEvent>(CL_BIND_EVENT_FN(GameLayer::OnKeyPressed));
-	}
-
-	bool GameLayer::OnWindowResized(WindowResizedEvent& e)
-	{
-		if (e.GetWidth() != 0 && e.GetHeight() != 0)
-		{
-			auto& cc = m_PlayerEntity.GetComponent<CameraComponent>();
-			cc.Camera.SetViewportSize((float)e.GetWidth(), (float)e.GetHeight());
-		}
-
-		return false;
 	}
 
 	bool GameLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -79,9 +140,9 @@ namespace Cubeland
 		if (e.GetKeyCode() == KeyCode::Escape)
 		{
 			World* world = World::GetActiveWorld();
-			if (Input::GetCursorMode() == CursorMode::Normal)
+			if (world->IsPaused())
 			{
-				Input::SetCursorMode(CursorMode::Hidden);
+				Input::SetCursorMode(CursorMode::Locked);
 				if (world)
 					world->SetPaused(false);
 			}

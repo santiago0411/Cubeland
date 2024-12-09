@@ -43,6 +43,44 @@ namespace Cubeland
 		}
 
 		template<typename T>
+		T& GetScriptComponentAs()
+		{
+			static_assert(std::is_base_of_v<ScriptableEntity, T>, "Cannot get a ScriptComponent that doesn't inherit from ScriptableEntity");
+			CL_ASSERT(HasComponent<ScriptComponent>(), "Entity does not have script component!");
+			const auto& sc = m_World->m_Registry.get<ScriptComponent>(m_Handle);
+			CL_ASSERT(sc.Instance);
+			return *dynamic_cast<T*>(sc.Instance);
+		}
+
+		template<typename T>
+		bool TryGetComponentInChildren(T& outComponent)
+		{
+			for (UUID child : Children())
+			{
+				Entity childEntity = m_World->TryGetEntityWithUUID(child);
+				if (childEntity.HasComponent<T>())
+				{
+					outComponent = childEntity.GetComponent<T>();
+					return true;
+				}
+			}
+			return false;
+		}
+
+		template<typename T>
+		std::vector<T*> GetComponentsInChildren()
+		{
+			std::vector<T*> components(0);
+			for (UUID child : Children())
+			{
+				Entity childEntity = m_World->TryGetEntityWithUUID(child);
+				if (childEntity.HasComponent<T>())
+					components.push_back(&childEntity.GetComponent<T>());
+			}
+			return components;
+		}
+
+		template<typename T>
 		bool HasComponent()
 		{
 			return m_World->m_Registry.any_of<T>(m_Handle);
