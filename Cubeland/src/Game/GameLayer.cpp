@@ -14,6 +14,8 @@
 
 #include <imgui.h>
 
+#include "UI/DebugOverlay.h"
+
 namespace Cubeland
 {
 	void GameLayer::OnAttach()
@@ -40,6 +42,8 @@ namespace Cubeland
 		auto& cc  = cameraEntity.AddComponent<CameraComponent>();
 		cc.Camera = Camera(45.0f, 0.1f, 100.0f);
 		m_GameCamera = &cc.Camera;
+
+		m_DebugOverlay = CreateScope<DebugOverlay>(m_PlayerEntity);
 
 		for (int y = 0; y < 2; y++)
 		{
@@ -118,13 +122,8 @@ namespace Cubeland
 			{ 1, 0 }    // UV bottom-right
 		);
 
-		if (World::GetActiveWorld()->IsPaused())
-			ImGui::Text("PAUSED");
-
-		const auto& transform = m_PlayerEntity.GetComponent<TransformComponent>();
-		ImGui::Text("Player");
-		ImGui::Text("\tPosition: X: %.3f Y: %.3f Z: %.3f", transform.Position.x, transform.Position.y, transform.Position.z);
-		ImGui::Text("\tRotation: X: %.3f Y: %.3f Z: %.3f", transform.Rotation.x, transform.Rotation.y, transform.Rotation.z);
+		if (m_RenderDebugOverlay)
+			m_DebugOverlay->OnImGuiRender();
 
 		ImGui::End();
 	}
@@ -139,19 +138,24 @@ namespace Cubeland
 	{
 		if (e.GetKeyCode() == KeyCode::Escape)
 		{
-			World* world = World::GetActiveWorld();
-			if (world->IsPaused())
+			if (World* world = World::GetActiveWorld())
 			{
-				Input::SetCursorMode(CursorMode::Locked);
-				if (world)
+				if (world->IsPaused())
+				{
+					Input::SetCursorMode(CursorMode::Locked);
 					world->SetPaused(false);
+				}
+				else
+				{
+					Input::SetCursorMode(CursorMode::Normal);
+					if (world)
+						world->SetPaused(true);
+				}
 			}
-			else
-			{
-				Input::SetCursorMode(CursorMode::Normal);
-				if (world)
-					world->SetPaused(true);
-			}
+		}
+		else if (e.GetKeyCode() == KeyCode::F3)
+		{
+			m_RenderDebugOverlay = !m_RenderDebugOverlay;
 		}
 
 		return false;

@@ -5,6 +5,7 @@
 #include <backends/imgui_impl_opengl3.h>
 
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 
 #include "Core/Application.h"
 
@@ -18,6 +19,9 @@ namespace Cubeland
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+		m_DefaultDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 12.0f);
+		m_LargeDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 16.0f);
 
 		ImGui::StyleColorsDark();
 
@@ -54,10 +58,13 @@ namespace Cubeland
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGui::PushFont(m_DefaultDogicaFont);
 	}
 
 	void ImGuiLayer::End()
 	{
+		ImGui::PopFont();
+
 		ImGuiIO& io = ImGui::GetIO();
 		const Application& app = Application::Get();
 		const glm::vec2 windowSize = app.GetWindow().GetWidthAndHeight();

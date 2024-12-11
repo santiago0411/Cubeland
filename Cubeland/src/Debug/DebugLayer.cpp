@@ -12,7 +12,7 @@ namespace Cubeland
 		if (e.GetEventType() == EventType::KeyPressed)
 		{
 			const auto& keyPressedEvent = dynamic_cast<KeyPressedEvent&>(e);
-			if (keyPressedEvent.GetKeyCode() == KeyCode::F3)
+			if (keyPressedEvent.GetKeyCode() == KeyCode::F1)
 			{
 				m_WindowOpened = !m_WindowOpened;
 			}

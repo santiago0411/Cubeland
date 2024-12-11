@@ -2,6 +2,8 @@
 
 #include "Core/Layer.h"
 
+struct ImFont;
+
 namespace Cubeland
 {
 	class ImGuiLayer final : public Layer
@@ -19,7 +21,13 @@ namespace Cubeland
 
 		void SetBlockEvents(const bool block) { m_BlockEvents = block; }
 
+		const ImFont* GetDefault() const { return m_DefaultDogicaFont; }
+		const ImFont* GetDefaultLarge() const { return m_LargeDogicaFont; }
+
 	private:
 		bool m_BlockEvents = false;
+
+		ImFont* m_DefaultDogicaFont = nullptr;
+		ImFont* m_LargeDogicaFont = nullptr;
 	};
 }

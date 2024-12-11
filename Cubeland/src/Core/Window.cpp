@@ -31,7 +31,7 @@ namespace Cubeland
 		if (!s_glfwInitialized)
 		{
 			int success = glfwInit();
-			CL_ASSERT(success, "Failed to initialze GLFW!");
+			CL_ASSERT(success, "Failed to initialize GLFW!");
 			glfwSetErrorCallback(glfwErrorCallback);
 			s_glfwInitialized = true;
 		}
