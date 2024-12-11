@@ -84,6 +84,20 @@ namespace Cubeland
 		glLineWidth(width);
 	}
 
+	void OpenGLContext::SetWireframeMode(bool on)
+	{
+		if (on)
+		{
+			glPolygonMode(GL_FRONT, GL_LINE);
+			glPolygonMode(GL_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT, GL_FILL);
+			glPolygonMode(GL_BACK, GL_FILL);
+		}
+	}
+
 	void OpenGLContext::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 	{
 		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();

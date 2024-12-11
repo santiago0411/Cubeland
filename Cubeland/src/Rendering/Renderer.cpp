@@ -7,6 +7,8 @@
 #include "Rendering/Shader.h"
 #include "Rendering/Texture2D.h"
 
+#define CUBE_SHADER "CubeShader"
+
 namespace Cubeland
 {
 	struct CubeVertex
@@ -25,7 +27,6 @@ namespace Cubeland
 
 		Ref<VertexArray> CubeVertexArray;
 		Ref<VertexBuffer> CubeVertexBuffer;
-		Ref<Shader> CubeShader;
 		Ref<Texture2D> WhiteTexture;
 
 		uint32_t CubeIndexCount = 0;
@@ -101,6 +102,7 @@ namespace Cubeland
 		CameraData CameraBuffer{};
 
 		Renderer::Statistics Stats;
+		bool WireframeModeOn = false;
 	};
 
 	static RendererData* g_Data = nullptr;
@@ -189,7 +191,7 @@ namespace Cubeland
 		g_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 		g_Data->TextureSlots[0] = g_Data->WhiteTexture;
 
-		g_Data->CubeShader = CreateRef<Shader>("CubeShader", ShaderFilesMap {
+		ShaderLibrary::CreateAndAddShader(CUBE_SHADER, ShaderFilesMap {
 			{ ShaderType::Vertex,	"assets/shaders/CubeShader_Vert.glsl"	},
 			{ ShaderType::Fragment, "assets/shaders/CubeShader_Frag.glsl"	}
 		});
@@ -210,7 +212,11 @@ namespace Cubeland
 
 		g_Data->CameraBuffer.View = viewMatrix;
 		g_Data->CameraBuffer.Projection = camera.GetProjection();
-		g_Data->CubeShader->GetUniformBuffer("CameraData")->SetData(&g_Data->CameraBuffer);
+
+		Ref<Shader> cubeShader = ShaderLibrary::GetShader(CUBE_SHADER);
+		cubeShader->GetUniformBuffer("CameraData")->SetData(&g_Data->CameraBuffer);
+		int renderWireframe = g_Data->WireframeModeOn;
+		cubeShader->GetUniformBuffer("RenderOptions")->SetData(&renderWireframe);
 
 		StartBatch();
 	}
@@ -224,13 +230,15 @@ namespace Cubeland
 	{
 		if (g_Data->CubeIndexCount > 0)
 		{
+			OpenGLContext::SetWireframeMode(g_Data->WireframeModeOn);
+
 			const auto dataSize = (uint32_t)((uint8_t*)g_Data->CubeVertexBufferPtr - (uint8_t*)g_Data->CubeVertexBufferBase);
 			g_Data->CubeVertexBuffer->SetData(g_Data->CubeVertexBufferBase, dataSize);
 
 			for (uint32_t i = 0; i < g_Data->TextureSlotIndex; i++)
 				g_Data->TextureSlots[i]->Bind(i);
 
-			g_Data->CubeShader->Bind();
+			ShaderLibrary::GetShader(CUBE_SHADER)->Bind();
 			OpenGLContext::DrawIndexed(g_Data->CubeVertexArray, g_Data->CubeIndexCount);
 			g_Data->Stats.DrawCalls++;
 		}
@@ -271,6 +279,11 @@ namespace Cubeland
 	{
 		Flush();
 		StartBatch();
+	}
+
+	bool* Renderer::GetWireFrameModeOn()
+	{
+		return &g_Data->WireframeModeOn;
 	}
 
 	uint32_t Renderer::FindTextureIndex(const Ref<Texture2D>& texture)

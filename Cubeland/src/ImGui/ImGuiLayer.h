@@ -21,8 +21,8 @@ namespace Cubeland
 
 		void SetBlockEvents(const bool block) { m_BlockEvents = block; }
 
-		const ImFont* GetDefault() const { return m_DefaultDogicaFont; }
-		const ImFont* GetDefaultLarge() const { return m_LargeDogicaFont; }
+		ImFont* GetDefault() const { return m_DefaultDogicaFont; }
+		ImFont* GetDefaultLarge() const { return m_LargeDogicaFont; }
 
 	private:
 		bool m_BlockEvents = false;

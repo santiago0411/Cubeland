@@ -3,7 +3,11 @@
 
 #include <imgui.h>
 
+#include "Core/Input.h"
+
 #include "Events/KeyboardEvent.h"
+
+#include "Rendering/Renderer.h"
 
 namespace Cubeland
 {
@@ -26,6 +30,8 @@ namespace Cubeland
 
 		ImGui::SetNextWindowSize({ 400, 800 });
 		ImGui::Begin("Cubeland Debug", &m_WindowOpened);
+
+		ImGui::Checkbox("Wireframe Mode", Renderer::GetWireFrameModeOn());
 
 		ImGui::End();
 	}

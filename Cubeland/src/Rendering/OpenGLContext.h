@@ -17,6 +17,8 @@ namespace Cubeland
 		static void SetViewport(uint32_t width, uint32_t height);
 		static void SetLineWidth(float width);
 
+		static void SetWireframeMode(bool on);
+
 		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0);
 	};
 }

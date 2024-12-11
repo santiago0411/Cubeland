@@ -25,7 +25,7 @@ namespace Cubeland
 		void OnEvent(Event& e) override;
 
 	private:
-		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnKeyPressed(const KeyPressedEvent& e);
 
 	private:
 		Entity m_PlayerEntity{};

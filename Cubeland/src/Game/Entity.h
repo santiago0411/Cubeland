@@ -45,7 +45,7 @@ namespace Cubeland
 		}
 
 		template<typename T>
-		Ref<T> GetScriptComponentAs()
+		WeakRef<T> GetScriptComponentAs()
 		{
 			static_assert(std::is_base_of_v<ScriptableEntity, T>, "Cannot get a ScriptComponent that doesn't inherit from ScriptableEntity");
 			CL_ASSERT(HasComponent<ScriptComponent>(), "Entity does not have script component!");

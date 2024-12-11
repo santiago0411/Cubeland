@@ -126,7 +126,7 @@ namespace Cubeland
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
 		options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
-		options.SetOptimizationLevel(shaderc_optimization_level_performance);
+		// options.SetOptimizationLevel(shaderc_optimization_level_performance);
 
 		auto&& [stage, source, cachePath] = shaderSourceInfo;
 

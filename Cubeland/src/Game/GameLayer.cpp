@@ -6,15 +6,12 @@
 
 #include "Game/GameTextures.h"
 #include "Game/PlayerComponent.h"
-#include "Game/ScriptableEntity.h"
 #include "Game/World.h"
 
 #include "Rendering/Framebuffer.h"
 #include "Rendering/Renderer.h"
 
 #include <imgui.h>
-
-#include "UI/DebugOverlay.h"
 
 namespace Cubeland
 {
@@ -115,7 +112,8 @@ namespace Cubeland
 
 		// Render the scene framebuffer as the background
 		ImGui::GetWindowDrawList()->AddImage(
-			(ImTextureID)m_Framebuffer->GetColorAttachmentRendererId(),
+			// Double cast to avoid warning
+			(ImTextureID)(uint64_t)m_Framebuffer->GetColorAttachmentRendererId(),
 			imageStartPos,
 			imageEndPos,
 			{ 0, 1 },   // UV top-left
@@ -134,7 +132,7 @@ namespace Cubeland
 		dispatcher.Dispatch<KeyPressedEvent>(CL_BIND_EVENT_FN(GameLayer::OnKeyPressed));
 	}
 
-	bool GameLayer::OnKeyPressed(KeyPressedEvent& e)
+	bool GameLayer::OnKeyPressed(const KeyPressedEvent& e)
 	{
 		if (e.GetKeyCode() == KeyCode::Escape)
 		{

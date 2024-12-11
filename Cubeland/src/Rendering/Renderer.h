@@ -36,5 +36,9 @@ namespace Cubeland
 
 		static void StartBatch();
 		static void NextBatch();
+
+		static bool* GetWireFrameModeOn();
+
+		friend class DebugLayer;
 	};
 }
