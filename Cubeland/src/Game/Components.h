@@ -98,9 +98,9 @@ namespace Cubeland
 
 	struct ScriptComponent
 	{
-		ScriptableEntity* Instance = nullptr;
+		Ref<ScriptableEntity> Instance = nullptr;
 
-		ScriptableEntity* (*InstantiateScript)();
+		Ref<ScriptableEntity> (*InstantiateScript)();
 		void (*DestroyScript)(ScriptComponent&);
 
 		template <typename T>
@@ -108,7 +108,7 @@ namespace Cubeland
 		{
 			static_assert(std::is_base_of_v<ScriptableEntity, T>, "Cannot Bind() a ScriptComponent to a type that doesn't inherit from ScriptableEntity");
 			InstantiateScript = ScriptableEntityManager::CreateInstance<T>;
-			DestroyScript = [](ScriptComponent& se) { ScriptableEntityManager::DestroyInstance(se.Instance); se.Instance = nullptr; };
+			DestroyScript = [](ScriptComponent& se) { se.Instance = nullptr; };
 		}
 	};
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Base.h"
+
 #include "Game/Components.h"
 #include "Game/World.h"
 
@@ -43,13 +45,12 @@ namespace Cubeland
 		}
 
 		template<typename T>
-		T& GetScriptComponentAs()
+		Ref<T> GetScriptComponentAs()
 		{
 			static_assert(std::is_base_of_v<ScriptableEntity, T>, "Cannot get a ScriptComponent that doesn't inherit from ScriptableEntity");
 			CL_ASSERT(HasComponent<ScriptComponent>(), "Entity does not have script component!");
 			const auto& sc = m_World->m_Registry.get<ScriptComponent>(m_Handle);
-			CL_ASSERT(sc.Instance);
-			return *dynamic_cast<T*>(sc.Instance);
+			return sc.Instance ? std::static_pointer_cast<T>(sc.Instance) : nullptr;
 		}
 
 		template<typename T>

@@ -10,12 +10,10 @@ namespace Cubeland
 	{
 	public:
 		template<typename T>
-		static ScriptableEntity* CreateInstance()
+		static Ref<ScriptableEntity> CreateInstance()
 		{
 			static_assert(std::is_base_of_v<ScriptableEntity, T>, "Cannot CreateInstance() of a class that doesn't inherit from ScriptableEntity");
-			return new T();
+			return CreateRef<T>();
 		}
-
-		static void DestroyInstance(const ScriptableEntity* instance);
 	};
 }
