@@ -22,6 +22,7 @@ namespace Cubeland
 
 		static bool IsKeyPressed(const KeyCode key);
 		static bool IsMouseButtonPressed(const MouseButton button);
+		static void SetMousePosition(glm::vec2 pos);
 		static glm::vec2 GetMousePosition();
 
 		static void SetCursorMode(CursorMode mode);

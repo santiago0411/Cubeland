@@ -110,22 +110,23 @@ namespace Cubeland
 
 	void World::OnUpdate(float ts)
 	{
-		if (!m_Paused && Application::Get().GetWindow().IsFocused())
-		{
-			// Update scripts
-			m_Registry.view<ScriptComponent>().each([this, ts](entt::entity handle, ScriptComponent& sc)
-			{
-				bool isValid = true;
-				if (!sc.Instance)
-					isValid = CreateScriptableEntityInstance(sc, handle, true);
+		if (m_Paused)
+			ts = 0.0f;
 
-				if (isValid)
-					sc.Instance->OnUpdate(ts);
-			});
-		}
+		// Update scripts
+		m_Registry.view<ScriptComponent>().each([this, ts](entt::entity handle, ScriptComponent& sc)
+		{
+			bool isValid = true;
+			if (!sc.Instance)
+				isValid = CreateScriptableEntityInstance(sc, handle, true);
+
+			if (isValid)
+				sc.Instance->OnUpdate(ts);
+		});
 
 		Render();
 	}
+
 
 	void World::Render()
 	{

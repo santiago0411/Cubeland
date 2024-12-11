@@ -30,4 +30,19 @@ namespace Cubeland
 		EVENT_CLASS_TYPE(WindowClosed)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
+
+	class WindowFocusEvent : public Event
+	{
+	public:
+		WindowFocusEvent(bool focused)
+			: m_Focused(focused) {}
+
+		bool Focused() const { return m_Focused; }
+
+		EVENT_CLASS_TYPE(WindowFocus)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+
+	private:
+		bool m_Focused;
+	};
 }

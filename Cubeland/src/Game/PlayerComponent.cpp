@@ -67,15 +67,19 @@ namespace Cubeland
 		if (mousePosition == m_LastMousePosition)
 			return;
 
-		float mouseVelocity = MOUSE_SENSITIVITY * ROTATION_SPEED * ts;
-		glm::vec2 delta = (mousePosition - m_LastMousePosition) * mouseVelocity;
+		if (Input::GetCursorMode() == CursorMode::Locked)
+		{
+			float mouseVelocity = MOUSE_SENSITIVITY * ROTATION_SPEED * ts;
+			glm::vec2 delta = (mousePosition - m_LastMousePosition) * mouseVelocity;
+
+			glm::vec3& rotation = transform.Rotation;
+			rotation.x -= delta.y;
+			rotation.y -= delta.x;
+
+			// Clamp pitch between -90 and 90 degrees
+			rotation.x = glm::clamp(rotation.x, -glm::half_pi<float>() + 0.01f, glm::half_pi<float>() - 0.01f);
+		}
+
 		m_LastMousePosition = mousePosition;
-
-		glm::vec3& rotation = transform.Rotation;
-		rotation.x -= delta.y;
-		rotation.y -= delta.x;
-
-		// Clamp pitch between -90 and 90 degrees
-		rotation.x = glm::clamp(rotation.x, -glm::half_pi<float>() + 0.01f, glm::half_pi<float>() - 0.01f);
 	}
 }

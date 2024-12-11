@@ -124,6 +124,13 @@ namespace Cubeland
 			data.EventCallback(event);
 		});
 
+		glfwSetWindowFocusCallback(m_Window, [](GLFWwindow* window, int focus)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			WindowFocusEvent event(focus == GLFW_TRUE);
+			data.EventCallback(event);
+		});
+
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int32_t key, int32_t scanCode, int32_t action, int32_t modes)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

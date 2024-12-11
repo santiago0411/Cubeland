@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Rendering/Camera.h"
-#include "Rendering/Buffer.h"
 #include "Rendering/StaticMesh.h"
 #include "Rendering/Texture2D.h"
 

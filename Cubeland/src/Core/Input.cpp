@@ -21,6 +21,12 @@ namespace Cubeland
 		return glfwGetMouseButton(window, (int)button);
 	}
 
+	void Input::SetMousePosition(glm::vec2 pos)
+	{
+		GLFWwindow* window = GET_NATIVE_WINDOW();
+		glfwSetCursorPos(window, pos.x, pos.y);
+	}
+
 	glm::vec2 Input::GetMousePosition()
 	{
 		GLFWwindow* window = GET_NATIVE_WINDOW();

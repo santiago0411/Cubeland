@@ -26,6 +26,7 @@ namespace Cubeland
 
 	private:
 		bool OnKeyPressed(const KeyPressedEvent& e);
+		bool OnWindowFocus(const WindowFocusEvent& e);
 
 	private:
 		Entity m_PlayerEntity{};

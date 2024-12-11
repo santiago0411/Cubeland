@@ -6,7 +6,7 @@ namespace Cubeland
 {
 	enum class EventType
 	{
-		WindowClosed, WindowResized,
+		WindowClosed, WindowResized, WindowFocus,
 		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};

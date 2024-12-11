@@ -130,6 +130,7 @@ namespace Cubeland
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(CL_BIND_EVENT_FN(GameLayer::OnKeyPressed));
+		dispatcher.Dispatch<WindowFocusEvent>(CL_BIND_EVENT_FN(GameLayer::OnWindowFocus));
 	}
 
 	bool GameLayer::OnKeyPressed(const KeyPressedEvent& e)
@@ -156,6 +157,12 @@ namespace Cubeland
 			m_RenderDebugOverlay = !m_RenderDebugOverlay;
 		}
 
+		return false;
+	}
+
+	bool GameLayer::OnWindowFocus(const WindowFocusEvent& e)
+	{
+		Input::SetCursorMode(e.Focused() ? CursorMode::Locked : CursorMode::Normal);
 		return false;
 	}
 }
