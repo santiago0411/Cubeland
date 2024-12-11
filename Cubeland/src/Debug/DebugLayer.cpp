@@ -6,6 +6,7 @@
 #include "Events/KeyboardEvent.h"
 
 #include "Rendering/Renderer.h"
+#include "Rendering/Shader.h"
 
 namespace Cubeland
 {
@@ -30,6 +31,16 @@ namespace Cubeland
 		ImGui::Begin("Cubeland Debug", &m_WindowOpened);
 
 		ImGui::Checkbox("Wireframe Mode", Renderer::GetWireFrameModeOn());
+
+		for (Ref<Shader> shader : ShaderLibrary::GetAllShaders())
+		{
+			ImGui::Text("%s", shader->GetName().c_str());
+			ImGui::SameLine();
+			if (ImGui::Button("Reload"))
+			{
+				ShaderLibrary::ReloadShader(shader);
+			}
+		}
 
 		ImGui::End();
 

@@ -4,6 +4,7 @@
 #include "Utils/Filesystem.h"
 
 #include <map>
+#include <ranges>
 
 namespace Cubeland
 {
@@ -22,6 +23,7 @@ namespace Cubeland
 		~Shader();
 
 		void Bind() const;
+		void Unbind() const;
 
 		const std::string& GetName() const { return m_Name; }
 
@@ -43,12 +45,19 @@ namespace Cubeland
 		void CreateProgram();
 		void ReflectAndCreateBuffers(uint32_t stage, const std::vector<uint32_t>& shaderData, const char* shaderName);
 
+		void ClearCachedSpriv();
+
 	private:
 		uint32_t m_RendererId = 0;
 		std::string m_Name;
 
 		std::unordered_map<uint32_t, std::vector<uint32_t>> m_OpenGLSpirv;
 		std::map<std::string, Ref<UniformBuffer>> m_UniformBuffersSet;
+
+		// Only for debug, add #if def in the future
+		ShaderFilesMap m_ShaderSources;
+
+		friend class ShaderLibrary;
 	};
 
 	class ShaderLibrary
@@ -75,8 +84,24 @@ namespace Cubeland
 
 		static bool ReloadShader(const std::string& name)
 		{
-			CL_ASSERT(false, "TODO");
-			return false;
+			CL_ASSERT(s_Library.contains(name));
+			return ReloadShader(s_Library[name]);
+		}
+
+		static bool ReloadShader(Ref<Shader> shader)
+		{
+			// TODO change shader creation to validate if they were successfully compiled/loaded?
+			CL_LOG_INFO("Reloading shader {}...", shader->GetName());
+			shader->Unbind();
+			shader->ClearCachedSpriv();
+			s_Library[shader->GetName()] = CreateRef<Shader>(shader->GetName(), shader->m_ShaderSources);
+			CL_LOG_INFO("Shader reloaded successfully.");
+			return true;
+		}
+
+		static auto GetAllShaders()
+		{
+			return s_Library | std::views::values;
 		}
 
 	private:

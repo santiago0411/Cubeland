@@ -83,7 +83,7 @@ namespace Cubeland
 	}
 
 	Shader::Shader(std::string name, const std::unordered_map<ShaderType, Filepath>& shaderSources)
-		: m_Name(std::move(name))
+		: m_Name(std::move(name)), m_ShaderSources(shaderSources)
 	{
 		Timer timer;
 
@@ -119,6 +119,11 @@ namespace Cubeland
 	void Shader::Bind() const
 	{
 		glUseProgram(m_RendererId);
+	}
+
+	void Shader::Unbind() const
+	{
+		glUseProgram(0);
 	}
 
 	void Shader::CompileOpenGLBinaries(const ShaderSourceInfo& shaderSourceInfo)
@@ -215,5 +220,15 @@ namespace Cubeland
 
 		for (const auto& sampledImage : resources.sampled_images)
 			CL_LOG_TRACE("  {0}", sampledImage.name);
+	}
+
+	void Shader::ClearCachedSpriv()
+	{
+		CL_LOG_INFO("Clearing cached spriv for shader: {}", m_Name);
+		for (const auto& shaderType : m_ShaderSources | std::views::keys)
+		{
+			const Filepath shaderCachePath = GetShaderCachePath(shaderType, m_Name);
+			std::filesystem::remove(shaderCachePath);
+		}
 	}
 }
