@@ -21,13 +21,20 @@ namespace Cubeland
 
 		void SetBlockEvents(const bool block) { m_BlockEvents = block; }
 
-		ImFont* GetDefault() const { return m_DefaultDogicaFont; }
-		ImFont* GetDefaultLarge() const { return m_LargeDogicaFont; }
+		ImFont* GetFontDefault() const { return m_DefaultFont; }
+		void SetDefaultFont(ImFont* font) { m_DefaultFont = font; }
+
+		ImFont* GetFontDogicaSmall() const { return m_SmallDogicaFont; }
+		ImFont* GetFontDogicaMedium() const { return m_MediumDogicaFont; }
+		ImFont* GetFontDogicaLarge() const { return m_LargeDogicaFont; }
 
 	private:
 		bool m_BlockEvents = false;
 
-		ImFont* m_DefaultDogicaFont = nullptr;
+		ImFont* m_DefaultFont = nullptr;
+
+		ImFont* m_SmallDogicaFont = nullptr;
+		ImFont* m_MediumDogicaFont = nullptr;
 		ImFont* m_LargeDogicaFont = nullptr;
 	};
 }

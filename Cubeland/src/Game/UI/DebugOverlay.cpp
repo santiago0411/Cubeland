@@ -11,14 +11,6 @@ namespace Cubeland
 {
 	void DebugOverlay::OnImGuiRender()
 	{
-		if (World::GetActiveWorld()->IsPaused())
-		{
-			ImGui::PushFont(Application::Get().GetImGuiLayer()->GetDefaultLarge());
-			ImGui::TextUnformatted("PAUSED");
-			ImGui::NewLine();
-			ImGui::PopFont();
-		}
-
 		if (m_PlayerEntity)
 		{
 			const auto& transform = m_PlayerEntity.GetComponent<TransformComponent>();

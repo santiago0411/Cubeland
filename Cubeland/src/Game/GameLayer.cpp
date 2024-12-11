@@ -8,10 +8,14 @@
 #include "Game/PlayerComponent.h"
 #include "Game/World.h"
 
+#include "ImGui/ImGuiUtils.h"
+
 #include "Rendering/Framebuffer.h"
 #include "Rendering/Renderer.h"
 
 #include <imgui.h>
+
+#include "Rendering/OpenGLContext.h"
 
 namespace Cubeland
 {
@@ -57,6 +61,8 @@ namespace Cubeland
 		}
 
 		world->Start();
+
+		OpenGLContext::SetClearColor({ 0.31f, 0.74f, 0.87f, 1.0f });
 	}
 
 	void GameLayer::OnDetach()
@@ -103,11 +109,8 @@ namespace Cubeland
 		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportSize.x, viewportSize.y };
 
-		const ImVec2 windowPos = ImGui::GetWindowPos();
 		const ImVec2 windowSize = ImGui::GetContentRegionAvail();
-		const ImVec2 windowPadding = ImGui::GetStyle().WindowPadding;
-
-		const ImVec2 imageStartPos = ImVec2(windowPos.x + windowPadding.x, windowPos.y + windowPadding.y);
+		const ImVec2 imageStartPos = ImGui::GetWindowPos();
 		const ImVec2 imageEndPos = ImVec2(imageStartPos.x + windowSize.x, imageStartPos.y + windowSize.y);
 
 		// Render the scene framebuffer as the background
@@ -119,6 +122,13 @@ namespace Cubeland
 			{ 0, 1 },   // UV top-left
 			{ 1, 0 }    // UV bottom-right
 		);
+
+		if (World::GetActiveWorld()->IsPaused())
+		{
+			ImGui::FontScope font(ImGui::Font::DogicaLarge);
+			ImGui::TextUnformatted("PAUSED");
+			ImGui::NewLine();
+		}
 
 		if (m_RenderDebugOverlay)
 			m_DebugOverlay->OnImGuiRender();
@@ -147,8 +157,7 @@ namespace Cubeland
 				else
 				{
 					Input::SetCursorMode(CursorMode::Normal);
-					if (world)
-						world->SetPaused(true);
+					world->SetPaused(true);
 				}
 			}
 		}

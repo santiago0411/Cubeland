@@ -20,8 +20,11 @@ namespace Cubeland
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		m_DefaultDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 12.0f);
+		m_SmallDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 8.0f);
+		m_MediumDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 12.0f);
 		m_LargeDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 16.0f);
+
+		m_DefaultFont = m_MediumDogicaFont;
 
 		ImGui::StyleColorsDark();
 
@@ -58,7 +61,7 @@ namespace Cubeland
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGui::PushFont(m_DefaultDogicaFont);
+		ImGui::PushFont(m_DefaultFont);
 	}
 
 	void ImGuiLayer::End()
