@@ -5,6 +5,8 @@
 
 #include "Events/KeyboardEvent.h"
 
+#include "ImGui/ImGuiUtils.h"
+
 #include "Rendering/Renderer.h"
 #include "Rendering/Shader.h"
 
@@ -30,20 +32,60 @@ namespace Cubeland
 		ImGui::SetNextWindowSize({ 400, 800 });
 		ImGui::Begin("Cubeland Debug", &m_WindowOpened);
 
-		ImGui::Checkbox("Wireframe Mode", Renderer::GetWireFrameModeOn());
+		bool renderer = ImGui::TreeNodeEx("Renderer", 
+			ImGuiTreeNodeFlags_OpenOnArrow | 
+			ImGuiTreeNodeFlags_SpanAvailWidth);
 
-		for (Ref<Shader> shader : ShaderLibrary::GetAllShaders())
+		ImGui::Dummy(ImVec2(0.0f, 5.0f));
+		if (renderer)
 		{
-			ImGui::Text("%s", shader->GetName().c_str());
-			ImGui::SameLine();
-			if (ImGui::Button("Reload"))
+			ImGui::FontScope font(ImGui::Font::DogicaSmall);
+			
+			ImGui::RightCheckbox("Wireframe Mode", Renderer::GetWireFrameModeOn());
+			ImGui::Dummy(ImVec2(0.0f, 3.0f));
+
+			for (Ref<Shader> shader : ShaderLibrary::GetAllShaders())
 			{
-				ShaderLibrary::ReloadShader(shader);
+				ImGui::Columns(2, nullptr, false);
+				ImGui::TextUnformatted(shader->GetName().c_str());
+				ImGui::NextColumn();
+
+				const char* reloadButtonText = "Reload";
+				float buttonWidth = ImGui::CalcTextSize(reloadButtonText).x + ImGui::GetStyle().FramePadding.x * 2;
+				float availableWidth = ImGui::GetContentRegionAvail().x;
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + availableWidth - buttonWidth);
+
+				if (ImGui::Button(reloadButtonText))
+				{
+					ShaderLibrary::ReloadShader(shader);
+				}
+
+				ImGui::Columns(1);
 			}
+
+			ImGui::TreePop();
+		}
+
+		bool rendererStats = ImGui::TreeNodeEx("Renderer Stats",
+			ImGuiTreeNodeFlags_OpenOnArrow |
+			ImGuiTreeNodeFlags_SpanAvailWidth);
+
+		ImGui::Dummy(ImVec2(0.0f, 5.0f));
+		if (rendererStats)
+		{
+			ImGui::FontScope font(ImGui::Font::DogicaSmall);
+			Renderer::Statistics stats = Renderer::GetStats();
+
+			ImGui::Text("Draw Calls: %u", stats.DrawCalls);
+			ImGui::Text("Cubes: %u", stats.CubeCount);
+			ImGui::Text("Vertices: %u", stats.GetTotalVertexCount());
+			ImGui::Text("Indices: %u", stats.GetTotalIndexCount());
+
+			ImGui::TreePop();
 		}
 
 		ImGui::End();
 
-		// ImGui::SetWindowFocus("Cubeland Debug");
+		ImGui::SetWindowFocus("Cubeland Debug");
 	}
 }

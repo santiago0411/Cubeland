@@ -44,4 +44,15 @@ namespace ImGui
 			PopFont();
 		}
 	};
+
+	static bool RightCheckbox(const char* label, bool* v)
+	{
+		float availableWidth = GetContentRegionAvail().x;
+		float checkboxPosX = GetCursorPosX() + availableWidth - GetFontSize() - GetStyle().FramePadding.x * 2;
+		TextUnformatted(label);
+		SameLine(checkboxPosX);
+		char id[256];
+		sprintf_s(id, sizeof id, "##%s", label);
+		return Checkbox(id, v);
+	}
 }

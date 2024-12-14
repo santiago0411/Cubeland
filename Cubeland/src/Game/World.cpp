@@ -15,7 +15,7 @@ namespace Cubeland
 
 	World* World::CreateNewWorld()
 	{
-		delete s_ActiveWorld;
+		DestroyActiveWorld();
 		s_ActiveWorld = new World;
 		return s_ActiveWorld;
 	}

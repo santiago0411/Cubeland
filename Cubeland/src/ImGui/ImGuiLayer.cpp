@@ -20,7 +20,7 @@ namespace Cubeland
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		m_SmallDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 8.0f);
+		m_SmallDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 9.0f);
 		m_MediumDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 12.0f);
 		m_LargeDogicaFont = io.Fonts->AddFontFromFileTTF("assets/fonts/dogica.ttf", 16.0f);
 
